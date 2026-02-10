@@ -1,0 +1,16 @@
+<% if (locals.movie) { %>
+    <h1>
+        <%= movie.title %>
+    </h1>
+    <p>
+        <%= movie.overview %>
+    </p>
+    <% if (locals.user) { %>
+        <form action="/favorites/add" method="POST">
+            <input type="hidden" name="movieId" value="<%= movie.id %>">
+            <button>Ajouter aux favoris</button>
+        </form>
+        <% } %>
+            <% } else { %>
+                <p>Film introuvable</p>
+                <% } %>

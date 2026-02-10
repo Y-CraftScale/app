@@ -1,0 +1,11 @@
+<h1>Bienvenue <%= user.username %>
+</h1>
+<h2>Vos Favoris</h2>
+<% if (locals.favorites) { %>
+    <ul>
+        <% favorites.forEach(fav=> { %>
+            <li>Film ID: <%= fav.movieId %>
+            </li>
+            <% }) %>
+    </ul>
+    <% } %>

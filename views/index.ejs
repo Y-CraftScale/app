@@ -1,0 +1,13 @@
+<h1>Films à la une</h1>
+<div class="movie-grid">
+    <% if (locals.movies) { %>
+        <% movies.forEach(movie=> { %>
+            <div class="movie-card">
+                <h3>
+                    <%= movie.title %>
+                </h3>
+                <a href="/movies/<%= movie.id %>">Voir détails</a>
+            </div>
+            <% }) %>
+                <% } %>
+</div>
