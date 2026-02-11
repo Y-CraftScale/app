@@ -7,7 +7,7 @@ services:
     container_name: app_mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root  # Doit correspondre à ton .env
+      MYSQL_ROOT_PASSWORD: SAE_401-appdb  # Doit correspondre à ton .env
       MYSQL_DATABASE: app_db # Crée la BDD au démarrage !
     ports:
       - "3306:3306"
@@ -21,7 +21,7 @@ services:
     restart: always
     environment:
       PMA_HOST: db
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: SAE_401-appdb
     ports:
       - "8085:80"
     depends_on:
