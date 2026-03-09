@@ -41,4 +41,12 @@ const checkUser = async (req, res, next) => {
     }
 };
 
-module.exports = { requireAuth, forwardAuthenticated, checkUser };
+const requireAdmin = (req, res, next) => {
+    if (req.session && req.session.userId && res.locals.user && res.locals.user.is_admin) {
+        return next();
+    }
+    req.session.error_msg = 'Accès refusé. Réservé aux administrateurs.';
+    return res.redirect('/');
+};
+
+module.exports = { requireAuth, forwardAuthenticated, checkUser, requireAdmin };

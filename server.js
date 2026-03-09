@@ -43,6 +43,8 @@ app.use('/', movieRoutes);
 const userRoutes = require('./routes/userRoutes');
 app.use('/', userRoutes);
 
+const adminRoutes = require('./routes/adminRoutes');
+app.use('/admin', adminRoutes);
 
 // --- 4. DÉMARRAGE DU SERVEUR ---
 const PORT = process.env.PORT || 3000;

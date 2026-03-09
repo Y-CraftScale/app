@@ -16,19 +16,18 @@
                 <input type="text" name="q" placeholder="Rechercher un film..." required>
                 <button type="submit">🔍</button>
             </form>
-            <ul class="nav-links">
-                <li><a href="/">Accueil</a></li>
-                <% if (locals.user) { %>
-                    <li><a href="/dashboard">Mon Profil</a></li>
-                    <% if (locals.user.is_admin) { %>
-                        <li><a href="/admin/dashboard">Admin</a></li>
-                    <% } %>
-                    <li><a href="/logout">Déconnexion</a></li>
-                <% } else { %>
-                    <li><a href="/login" class="btn-login">Connexion</a></li>
-                    <li><a href="/register">S'inscrire</a></li>
+            <a href="/">Accueil</a>
+            <a href="/users/search" style="margin-left: 1rem;">Communauté</a>
+            <% if (locals.user) { %>
+                <a href="/dashboard" class="btn-primary" style="margin-left: 1rem;">Mon Profil (<%= locals.user.username %>)</a>
+                <% if (locals.user.is_admin) { %>
+                    <a href="/admin" class="btn-primary" style="margin-left: 1rem; background-color: #e50914;">⚙️ Administration</a>
                 <% } %>
-            </ul>
+                <a href="/logout" style="margin-left: 1rem;">Déconnexion</a>
+            <% } else { %>
+                <a href="/login" style="margin-left: 1rem;">Connexion</a>
+                <a href="/register" style="margin-left: 1rem;">Inscription</a>
+            <% } %>
         </nav>
     </header>
 
