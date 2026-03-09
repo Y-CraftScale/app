@@ -11,5 +11,6 @@ router.get('/movie/:id', movieController.getMovieById);
 router.post('/movie/watchlist/add', requireAuth, movieController.toggleWatchlist);
 router.post('/movie/watched/add', requireAuth, movieController.markAsWatched);
 router.post('/movie/remove', requireAuth, movieController.removeFromList);
+router.post('/movie/comment', requireAuth, movieController.addComment);
 
 module.exports = router;

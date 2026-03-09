@@ -43,3 +43,90 @@ exports.updateProfile = async (req, res) => {
         res.redirect('/profile/edit');
     }
 };
+
+const Friendship = require('../models/Friendship');
+
+exports.searchUsers = async (req, res) => {
+    try {
+        const query = req.query.q;
+        let users = [];
+        
+        if (query && query.trim() !== '') {
+            const currentUserId = req.session.userId || 0; 
+            users = await Friendship.searchUsers(query, currentUserId);
+        }
+
+        res.render('user-search', { users, query });
+    } catch (err) {
+        console.error("Erreur searchUsers:", err);
+        res.render('user-search', { users: [], query: req.query.q || '' });
+    }
+};
+
+exports.getPublicProfile = async (req, res) => {
+    try {
+        const targetUserId = req.params.id;
+        const currentUserId = req.session ? req.session.userId : null;
+
+        if (currentUserId && currentUserId.toString() === targetUserId.toString()) {
+            return res.redirect('/dashboard');
+        }
+
+        const targetUser = await User.findById(targetUserId);
+        if (!targetUser) {
+            return res.status(404).send("Utilisateur introuvable");
+        }
+
+        const [watchlist, watchedMovies] = await Promise.all([
+            UserMovie.getUserWatchlist(targetUserId),
+            UserMovie.getUserWatchedMovies(targetUserId)
+        ]);
+
+        let friendshipStatus = null;
+        if (currentUserId) {
+            friendshipStatus = await Friendship.getFriendsStatus(currentUserId, targetUserId);
+        }
+
+        res.render('public-profile', { 
+            targetUser, 
+            watchlist, 
+            watchedMovies,
+            friendshipStatus,
+            currentUserId
+        });
+
+    } catch (err) {
+        console.error("Erreur getPublicProfile:", err);
+        res.status(500).send("Erreur serveur");
+    }
+};
+
+exports.sendFriendRequest = async (req, res) => {
+    try {
+        const { receiverId } = req.body;
+        const senderId = req.session.userId;
+
+        await Friendship.sendRequest(senderId, receiverId);
+        req.session.success_msg = "Demande d'ami envoyée !";
+        res.redirect(`/user/${receiverId}`);
+    } catch (err) {
+        console.error("Erreur sendFriendRequest:", err);
+        req.session.error_msg = "Erreur lors de l'envoi de la demande.";
+        res.redirect('back');
+    }
+};
+
+exports.acceptFriendRequest = async (req, res) => {
+    try {
+        const { senderId } = req.body;
+        const receiverId = req.session.userId;
+
+        await Friendship.acceptRequest(senderId, receiverId);
+        req.session.success_msg = "Demande d'ami acceptée ! Vous êtes maintenant connectés.";
+        res.redirect('/dashboard');
+    } catch (err) {
+        console.error("Erreur acceptFriendRequest:", err);
+        req.session.error_msg = "Erreur lors de l'acceptation.";
+        res.redirect('back');
+    }
+};

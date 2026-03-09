@@ -1,5 +1,6 @@
 const tmdbService = require('../services/tmdbService');
 const UserMovie = require('../models/UserMovie');
+const Comment = require('../models/Comment');
 
 exports.getHomePage = async (req, res) => {
     try {
@@ -38,9 +39,10 @@ exports.getMovieById = async (req, res) => {
     try {
         const movieId = req.params.id;
         
-        const [movie, similarMovies] = await Promise.all([
+        const [movie, similarMovies, comments] = await Promise.all([
             tmdbService.getMovieDetails(movieId),
-            tmdbService.getSimilarMovies(movieId)
+            tmdbService.getSimilarMovies(movieId),
+            Comment.getCommentsByMovie(movieId)
         ]);
 
         if (!movie) {
@@ -55,11 +57,33 @@ exports.getMovieById = async (req, res) => {
         res.render('movie-details', { 
             movie, 
             similarMovies: similarMovies.slice(0, 6),
+            comments,
             userStatus
         });
     } catch (error) {
         console.error("Erreur getMovieById:", error);
         res.status(500).send('Erreur serveur');
+    }
+};
+
+exports.addComment = async (req, res) => {
+    try {
+        const { movieId, title, poster_path, release_date, content } = req.body;
+        const userId = req.session.userId;
+
+        if (!content || content.trim() === '') {
+            req.session.error_msg = "Le commentaire ne peut pas être vide.";
+            return res.redirect(`/movie/${movieId}`);
+        }
+
+        await Comment.addComment(userId, movieId, { id: movieId, title, poster_path, release_date }, content);
+        
+        req.session.success_msg = "Votre commentaire a été publié !";
+        res.redirect(`/movie/${movieId}`);
+    } catch (err) {
+        console.error("Erreur ajout commentaire:", err);
+        req.session.error_msg = "Erreur lors de la publication du commentaire.";
+        res.redirect('back');
     }
 };
 

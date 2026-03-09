@@ -57,6 +57,39 @@
             </div>
         </div>
 
+        <div class="comments-section" style="margin-top: 3rem; background-color: #111; padding: 2rem; border-radius: 8px;">
+            <h3>💬 Avis et Commentaires</h3>
+            
+            <% if (locals.user) { %>
+                <form action="/movie/comment" method="POST" style="margin-bottom: 2rem;">
+                    <input type="hidden" name="movieId" value="<%= movie.id %>">
+                    <input type="hidden" name="title" value="<%= movie.title %>">
+                    <input type="hidden" name="poster_path" value="<%= movie.poster_path %>">
+                    <input type="hidden" name="release_date" value="<%= movie.release_date %>">
+                    <textarea name="content" rows="3" placeholder="Partagez votre avis sur ce film..." required style="width: 100%; padding: 1rem; background-color: #222; border: 1px solid #333; color: white; border-radius: 4px; resize: vertical; margin-bottom: 1rem;"></textarea>
+                    <button type="submit" class="btn-primary">Publier mon avis</button>
+                </form>
+            <% } else { %>
+                <p style="margin-bottom: 2rem;"><a href="/login" style="color: var(--accent-blue);">Connectez-vous</a> pour laisser un avis.</p>
+            <% } %>
+
+            <div class="comments-list">
+                <% if (locals.comments && comments.length > 0) { %>
+                    <% comments.forEach(comment => { %>
+                        <div class="comment" style="padding: 1rem; border-bottom: 1px solid #333; margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <strong><a href="/user/<%= comment.user_id %>" style="color: var(--accent-blue); text-decoration: none;"><%= comment.username %></a></strong>
+                                <small style="color: #666;"><%= new Date(comment.created_at).toLocaleDateString() %></small>
+                            </div>
+                            <p style="margin: 0; line-height: 1.5; color: #ddd;"><%= comment.content %></p>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p style="color: #666; font-style: italic;">Aucun avis pour le moment. Soyez le premier !</p>
+                <% } %>
+            </div>
+        </div>
+
         <div class="similar-movies-section">
             <h3>Films similaires</h3>
             <div class="movie-grid">
