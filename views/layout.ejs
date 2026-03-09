@@ -4,32 +4,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon App Cinéma</title>
+    <title>CineAddict</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
-    <header>
-        <div class="logo">Cinéma</div>
-        <nav>
-            <ul>
+    <header class="navbar">
+        <a href="/" class="nav-brand">CineAddict</a>
+        <nav class="nav-container">
+            <form action="/search" method="GET" class="search-form">
+                <input type="text" name="q" placeholder="Rechercher un film..." required>
+                <button type="submit">🔍</button>
+            </form>
+            <ul class="nav-links">
                 <li><a href="/">Accueil</a></li>
                 <% if (locals.user) { %>
-                    <li><a href="/dashboard">Espace Membre</a></li>
-                    <% if (user.role==='admin' ) { %>
-                        <li><a href="/admin/users">Admin</a></li>
-                        <% } %>
-                            <li><a href="/logout">Logout</a></li>
-                            <% } else { %>
-                                <li><a href="/login">Login</a></li>
-                                <li><a href="/register">Register</a></li>
-                                <% } %>
+                    <li><a href="/dashboard">Mon Profil</a></li>
+                    <% if (locals.user.is_admin) { %>
+                        <li><a href="/admin/dashboard">Admin</a></li>
+                    <% } %>
+                    <li><a href="/logout">Déconnexion</a></li>
+                <% } else { %>
+                    <li><a href="/login" class="btn-login">Connexion</a></li>
+                    <li><a href="/register">S'inscrire</a></li>
+                <% } %>
             </ul>
         </nav>
     </header>
-    <main class="container">
+
+    <main class="main-content">
+        <% if (locals.error_msg && locals.error_msg.length > 0) { %>
+            <div class="alert alert-error"><%= error_msg %></div>
+        <% } %>
+        <% if (locals.success_msg && locals.success_msg.length > 0) { %>
+            <div class="alert alert-success"><%= success_msg %></div>
+        <% } %>
         <%- body %>
     </main>
+
+    <footer>
+        <p>&copy; <%= new Date().getFullYear() %> CineAddict. Tous droits réservés.</p>
+    </footer>
+
     <script src="/js/script.js"></script>
 </body>
 

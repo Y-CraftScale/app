@@ -1,16 +1,85 @@
-<% if (locals.movie) { %>
-    <h1>
-        <%= movie.title %>
-    </h1>
-    <p>
-        <%= movie.overview %>
-    </p>
-    <% if (locals.user) { %>
-        <form action="/favorites/add" method="POST">
-            <input type="hidden" name="movieId" value="<%= movie.id %>">
-            <button>Ajouter aux favoris</button>
-        </form>
-        <% } %>
+<div class="movie-details-container">
+    <% if (locals.movie) { %>
+        <div class="movie-header">
+            <% if (movie.poster_path) { %>
+                <img src="https://image.tmdb.org/t/p/w500<%= movie.poster_path %>" alt="<%= movie.title %>" class="movie-poster-large">
             <% } else { %>
-                <p>Film introuvable</p>
+                <div class="no-poster-large"><%= movie.title %></div>
+            <% } %>
+            
+            <div class="movie-info-large">
+                <h1><%= movie.title %></h1>
+                <p class="tagline"><%= movie.tagline %></p>
+                
+                <div class="meta-data">
+                    <span class="rating">⭐ <%= movie.vote_average.toFixed(1) %></span>
+                    <span class="release-date">📅 <%= new Date(movie.release_date).toLocaleDateString() %></span>
+                    <span class="runtime">⏱️ <%= movie.runtime %> min</span>
+                </div>
+
+                <div class="overview">
+                    <h3>Synopsis</h3>
+                    <p><%= movie.overview %></p>
+                </div>
+
+                <% if (locals.user) { %>
+                    <% if (locals.userStatus && locals.userStatus.is_watched === 0) { %>
+                        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                            <form action="/movie/watched/add" method="POST" class="action-form">
+                                <input type="hidden" name="movieId" value="<%= movie.id %>">
+                                <button type="submit" class="btn-primary" style="background-color: #ffb400;">👁️ Marquer comme vu</button>
+                            </form>
+                            <form action="/movie/remove" method="POST" class="action-form">
+                                <input type="hidden" name="movieId" value="<%= movie.id %>">
+                                <button type="submit" class="btn-primary" style="background-color: var(--danger);">❌ Retirer de ma Watchlist</button>
+                            </form>
+                        </div>
+                    <% } else if (locals.userStatus && locals.userStatus.is_watched === 1) { %>
+                        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                            <span style="padding: 1rem; color: #ffb400; font-weight: bold;">✔️ Vous avez vu ce film</span>
+                            <form action="/movie/remove" method="POST" class="action-form">
+                                <input type="hidden" name="movieId" value="<%= movie.id %>">
+                                <button type="submit" class="btn-primary" style="background-color: var(--danger);">❌ Oublier ce film</button>
+                            </form>
+                        </div>
+                    <% } else { %>
+                        <form action="/movie/watchlist/add" method="POST" class="action-form" style="margin-top: 1rem;">
+                            <input type="hidden" name="movieId" value="<%= movie.id %>">
+                            <input type="hidden" name="title" value="<%= movie.title %>">
+                            <input type="hidden" name="poster_path" value="<%= movie.poster_path %>">
+                            <input type="hidden" name="release_date" value="<%= movie.release_date %>">
+                            <button type="submit" class="btn-primary">➕ Ajouter à ma Watchlist</button>
+                        </form>
+                    <% } %>
+                <% } else { %>
+                    <p class="auth-prompt"><a href="/login" style="color: var(--accent-blue); text-decoration: underline;">Connectez-vous</a> pour l'ajouter à vos listes.</p>
                 <% } %>
+            </div>
+        </div>
+
+        <div class="similar-movies-section">
+            <h3>Films similaires</h3>
+            <div class="movie-grid">
+                <% if (locals.similarMovies && similarMovies.length > 0) { %>
+                    <% similarMovies.forEach(sim => { %>
+                        <a href="/movie/<%= sim.id %>" class="movie-card">
+                            <% if (sim.poster_path) { %>
+                                <img src="https://image.tmdb.org/t/p/w500<%= sim.poster_path %>" alt="<%= sim.title %>">
+                            <% } else { %>
+                                <div class="no-poster"><%= sim.title %></div>
+                            <% } %>
+                            <div class="movie-info">
+                                <h4><%= sim.title %></h4>
+                            </div>
+                        </a>
+                    <% }) %>
+                <% } else { %>
+                    <p>Aucun film similaire trouvé.</p>
+                <% } %>
+            </div>
+        </div>
+
+    <% } else { %>
+        <div class="alert alert-error">Film introuvable.</div>
+    <% } %>
+</div>

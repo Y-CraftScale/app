@@ -1,7 +1,18 @@
-<h1>Inscription</h1>
-<form action="/register" method="POST">
-    <input type="text" name="username" placeholder="Pseudo" required>
-    <input type="email" name="email" placeholder="Email" required>
-    <input type="password" name="password" placeholder="Mot de passe" required>
-    <button type="submit">S'inscrire</button>
-</form>
+<div class="auth-container">
+    <h1>S'inscrire</h1>
+    <form action="/register" method="POST" class="auth-form">
+        <div class="input-group">
+            <input type="text" name="username" placeholder="Pseudo" required>
+        </div>
+        <div class="input-group">
+            <input type="email" name="email" placeholder="Email" required>
+        </div>
+        <div class="input-group">
+            <input type="password" name="password" placeholder="Mot de passe" required>
+        </div>
+        <button type="submit" class="btn-primary">S'inscrire</button>
+    </form>
+    <div class="auth-links">
+        <p>Déjà un compte ? <a href="/login">Connectez-vous</a></p>
+    </div>
+</div>

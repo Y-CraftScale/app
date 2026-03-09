@@ -2,32 +2,74 @@ require('dotenv').config();
 const axios = require('axios');
 
 // On crée une "instance" d'Axios.
-// C'est comme pré-enregistrer le numéro de téléphone et les réglages.
 const tmdbClient = axios.create({
     baseURL: process.env.TMDB_BASE_URL,
     params: {
-        api_key: process.env.TMDB_API_KEY, // La clé est envoyée automatiquement à chaque appel
-        language: 'fr-FR' // On veut les films en Français ! 🇫🇷
+        api_key: process.env.TMDB_API_KEY,
+        language: 'fr-FR'
     },
     headers: {
         'Accept': 'application/json'
     }
 });
 
-// Petite fonction pour tester si ça marche
-const getPopularMovies = async () => {
+const getTrendingMovies = async () => {
     try {
-        // On appelle l'endpoint "/movie/popular"
-        const response = await tmdbClient.get('/movie/popular');
-        return response.data.results; // On renvoie juste la liste des films
+        const response = await tmdbClient.get('/trending/movie/week');
+        return response.data.results;
     } catch (error) {
-        console.error("❌ Erreur TMDB :", error.message);
+        console.error("❌ Erreur TMDB getTrendingMovies :", error.message);
         return [];
     }
 };
 
-// On exporte le client et les fonctions pour les utiliser ailleurs
+const getTopRatedMovies = async () => {
+    try {
+        const response = await tmdbClient.get('/movie/top_rated');
+        return response.data.results;
+    } catch (error) {
+        console.error("❌ Erreur TMDB getTopRatedMovies :", error.message);
+        return [];
+    }
+};
+
+const searchMovies = async (query) => {
+    try {
+        const response = await tmdbClient.get('/search/movie', {
+            params: { query }
+        });
+        return response.data.results;
+    } catch (error) {
+        console.error("❌ Erreur TMDB searchMovies :", error.message);
+        return [];
+    }
+};
+
+const getMovieDetails = async (movieId) => {
+    try {
+        const response = await tmdbClient.get(`/movie/${movieId}`);
+        return response.data;
+    } catch (error) {
+        console.error("❌ Erreur TMDB getMovieDetails :", error.message);
+        return null;
+    }
+};
+
+const getSimilarMovies = async (movieId) => {
+    try {
+        const response = await tmdbClient.get(`/movie/${movieId}/similar`);
+        return response.data.results;
+    } catch (error) {
+        console.error("❌ Erreur TMDB getSimilarMovies :", error.message);
+        return [];
+    }
+};
+
 module.exports = {
     tmdbClient,
-    getPopularMovies
+    getTrendingMovies,
+    getTopRatedMovies,
+    searchMovies,
+    getMovieDetails,
+    getSimilarMovies
 };
