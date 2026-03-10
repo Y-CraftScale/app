@@ -130,7 +130,7 @@ content TEXT NOT NULL,
 
 -- Modération : TRUE par défaut, l'admin peut passer à FALSE (Rejet)
 
-is_validated BOOLEAN DEFAULT TRUE,
+is_validated BOOLEAN DEFAULT FALSE,
 
 
 

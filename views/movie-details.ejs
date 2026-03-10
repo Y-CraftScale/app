@@ -22,6 +22,48 @@
                     <p><%= movie.overview %></p>
                 </div>
 
+                <% if (locals.providers && (providers.flatrate || providers.rent || providers.buy)) { %>
+                    <div class="providers-section" style="margin-top: 1.5rem; background-color: #1a1a1a; padding: 1rem; border-radius: 8px;">
+                        <h3 style="margin-top: 0; font-size: 1.1rem; border-bottom: 1px solid #333; padding-bottom: 0.5rem; margin-bottom: 1rem;">Où regarder en France ?</h3>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            
+                            <% if (providers.flatrate) { %>
+                                <div>
+                                    <strong style="color: #bbb; font-size: 0.9rem;">En Streaming (Abonnement) :</strong>
+                                    <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                                        <% providers.flatrate.forEach(prov => { %>
+                                            <img src="https://image.tmdb.org/t/p/original<%= prov.logo_path %>" alt="<%= prov.provider_name %>" title="<%= prov.provider_name %>" style="width: 40px; height: 40px; border-radius: 8px; border: 1px solid #333;">
+                                        <% }) %>
+                                    </div>
+                                </div>
+                            <% } %>
+
+                            <% if (providers.rent) { %>
+                                <div>
+                                    <strong style="color: #bbb; font-size: 0.9rem;">En Location :</strong>
+                                    <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                                        <% providers.rent.forEach(prov => { %>
+                                            <img src="https://image.tmdb.org/t/p/original<%= prov.logo_path %>" alt="<%= prov.provider_name %>" title="<%= prov.provider_name %>" style="width: 40px; height: 40px; border-radius: 8px; border: 1px solid #333;">
+                                        <% }) %>
+                                    </div>
+                                </div>
+                            <% } %>
+
+                            <% if (providers.buy) { %>
+                                <div>
+                                    <strong style="color: #bbb; font-size: 0.9rem;">À l'Achat :</strong>
+                                    <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                                        <% providers.buy.forEach(prov => { %>
+                                            <img src="https://image.tmdb.org/t/p/original<%= prov.logo_path %>" alt="<%= prov.provider_name %>" title="<%= prov.provider_name %>" style="width: 40px; height: 40px; border-radius: 8px; border: 1px solid #333;">
+                                        <% }) %>
+                                    </div>
+                                </div>
+                            <% } %>
+                            
+                        </div>
+                    </div>
+                <% } %>
+
                 <% if (locals.user) { %>
                     <% if (locals.userStatus && locals.userStatus.is_watched === 0) { %>
                         <div style="display: flex; gap: 1rem; margin-top: 1rem;">
@@ -66,6 +108,14 @@
                     <input type="hidden" name="title" value="<%= movie.title %>">
                     <input type="hidden" name="poster_path" value="<%= movie.poster_path %>">
                     <input type="hidden" name="release_date" value="<%= movie.release_date %>">
+                    <select name="rating" required style="width: 100%; padding: 1rem; background-color: #222; border: 1px solid #333; color: white; border-radius: 4px; margin-bottom: 1rem;">
+                        <option value="" disabled selected>Notez ce film (sur 5)</option>
+                        <option value="5">⭐⭐⭐⭐⭐ 5/5 - Chef-d'œuvre</option>
+                        <option value="4">⭐⭐⭐⭐ 4/5 - Très bon</option>
+                        <option value="3">⭐⭐⭐ 3/5 - Correct</option>
+                        <option value="2">⭐⭐ 2/5 - Décevant</option>
+                        <option value="1">⭐ 1/5 - Mauvais</option>
+                    </select>
                     <textarea name="content" rows="3" placeholder="Partagez votre avis sur ce film..." required style="width: 100%; padding: 1rem; background-color: #222; border: 1px solid #333; color: white; border-radius: 4px; resize: vertical; margin-bottom: 1rem;"></textarea>
                     <button type="submit" class="btn-primary">Publier mon avis</button>
                 </form>
@@ -77,8 +127,15 @@
                 <% if (locals.comments && comments.length > 0) { %>
                     <% comments.forEach(comment => { %>
                         <div class="comment" style="padding: 1rem; border-bottom: 1px solid #333; margin-bottom: 1rem;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                                <strong><a href="/user/<%= comment.user_id %>" style="color: var(--accent-blue); text-decoration: none;"><%= comment.username %></a></strong>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <div>
+                                    <strong><a href="/user/<%= comment.user_id %>" style="color: var(--accent-blue); text-decoration: none;"><%= comment.username %></a></strong>
+                                    <% if (comment.rating) { %>
+                                        <span style="color: #ffb400; margin-left: 0.5rem;">
+                                            <%= '⭐'.repeat(comment.rating) %> (<%= comment.rating %>/5)
+                                        </span>
+                                    <% } %>
+                                </div>
                                 <small style="color: #666;"><%= new Date(comment.created_at).toLocaleDateString() %></small>
                             </div>
                             <p style="margin: 0; line-height: 1.5; color: #ddd;"><%= comment.content %></p>

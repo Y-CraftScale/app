@@ -50,13 +50,13 @@ app.use('/admin', adminRoutes);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
     console.log(`\n🚀 Serveur démarré sur http://localhost:${PORT}`);
-    
+
     // Petit test technique pour vérifier la BDD au démarrage
     try {
         await db.query('SELECT 1');
         console.log('✅ Connexion à la Base de Données : RÉUSSIE');
     } catch (err) {
         console.error('❌ Connexion à la Base de Données : ÉCHOUÉE');
-        console.error('👉 Vérifie que XAMPP/MAMP est lancé et que la BDD "movie_planner_db" existe.');
+        console.error('👉 Détails de l\'erreur :', err.message);
     }
 });

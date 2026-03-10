@@ -65,11 +65,23 @@ const getSimilarMovies = async (movieId) => {
     }
 };
 
+const getMovieProviders = async (movieId) => {
+    try {
+        const response = await tmdbClient.get(`/movie/${movieId}/watch/providers`);
+        // On cherche spécifiquement les données pour la France ('FR')
+        return response.data.results.FR || null;
+    } catch (error) {
+        console.error("❌ Erreur TMDB getMovieProviders :", error.message);
+        return null;
+    }
+};
+
 module.exports = {
     tmdbClient,
     getTrendingMovies,
     getTopRatedMovies,
     searchMovies,
     getMovieDetails,
-    getSimilarMovies
+    getSimilarMovies,
+    getMovieProviders
 };

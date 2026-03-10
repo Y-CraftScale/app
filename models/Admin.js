@@ -24,10 +24,19 @@ const Admin = {
             FROM comments c
             JOIN users u ON c.user_id = u.id
             JOIN movies m ON c.movie_id = m.movie_id
+            WHERE c.is_validated = FALSE
             ORDER BY c.created_at DESC 
             LIMIT 50
         `);
         return rows;
+    },
+
+    approveComment: async (commentId) => {
+        await db.query(`
+            UPDATE comments 
+            SET is_validated = TRUE 
+            WHERE id = ?
+        `, [commentId]);
     },
 
     deleteComment: async (commentId) => {

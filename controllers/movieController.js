@@ -39,10 +39,11 @@ exports.getMovieById = async (req, res) => {
     try {
         const movieId = req.params.id;
         
-        const [movie, similarMovies, comments] = await Promise.all([
+        const [movie, similarMovies, comments, providers] = await Promise.all([
             tmdbService.getMovieDetails(movieId),
             tmdbService.getSimilarMovies(movieId),
-            Comment.getCommentsByMovie(movieId)
+            Comment.getCommentsByMovie(movieId),
+            tmdbService.getMovieProviders(movieId)
         ]);
 
         if (!movie) {
@@ -58,6 +59,7 @@ exports.getMovieById = async (req, res) => {
             movie, 
             similarMovies: similarMovies.slice(0, 6),
             comments,
+            providers,
             userStatus
         });
     } catch (error) {
@@ -68,7 +70,7 @@ exports.getMovieById = async (req, res) => {
 
 exports.addComment = async (req, res) => {
     try {
-        const { movieId, title, poster_path, release_date, content } = req.body;
+        const { movieId, title, poster_path, release_date, content, rating } = req.body;
         const userId = req.session.userId;
 
         if (!content || content.trim() === '') {
@@ -76,9 +78,14 @@ exports.addComment = async (req, res) => {
             return res.redirect(`/movie/${movieId}`);
         }
 
-        await Comment.addComment(userId, movieId, { id: movieId, title, poster_path, release_date }, content);
+        if (!rating || rating < 1 || rating > 5) {
+            req.session.error_msg = "Veuillez sélectionner une note valide.";
+            return res.redirect(`/movie/${movieId}`);
+        }
+
+        await Comment.addComment(userId, movieId, { id: movieId, title, poster_path, release_date }, content, rating);
         
-        req.session.success_msg = "Votre commentaire a été publié !";
+        req.session.success_msg = "Votre commentaire a été soumis et est en attente de modération.";
         res.redirect(`/movie/${movieId}`);
     } catch (err) {
         console.error("Erreur ajout commentaire:", err);

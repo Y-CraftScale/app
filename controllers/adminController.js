@@ -46,3 +46,17 @@ exports.deleteComment = async (req, res) => {
         res.redirect('/admin');
     }
 };
+
+exports.approveComment = async (req, res) => {
+    try {
+        const commentId = req.params.id;
+        await Admin.approveComment(commentId);
+        
+        req.session.success_msg = "Commentaire approuvé avec succès.";
+        res.redirect('/admin');
+    } catch (err) {
+        console.error("Erreur approveComment:", err);
+        req.session.error_msg = "Erreur lors de l'approbation du commentaire.";
+        res.redirect('/admin');
+    }
+};

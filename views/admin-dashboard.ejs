@@ -82,9 +82,14 @@
                             </p>
                             <p style="margin: 0; color: #ddd; line-height: 1.5;"><%= comment.content %></p>
                         </div>
-                        <form action="/admin/comment/delete/<%= comment.id %>" method="POST">
-                            <button type="submit" class="btn-primary" style="background-color: var(--danger); padding: 0.5rem 1rem;" onclick="return confirm('Supprimer définitivement ce commentaire ?');">🗑️ Supprimer</button>
-                        </form>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <form action="/admin/comment/approve/<%= comment.id %>" method="POST">
+                                <button type="submit" class="btn-primary" style="background-color: #28a745; padding: 0.5rem 1rem;">✅ Approuver</button>
+                            </form>
+                            <form action="/admin/comment/delete/<%= comment.id %>" method="POST">
+                                <button type="submit" class="btn-primary" style="background-color: var(--danger); padding: 0.5rem 1rem;" onclick="return confirm('Supprimer définitivement ce commentaire ?');">🗑️ Rejeter</button>
+                            </form>
+                        </div>
                     </div>
                 <% }) %>
             <% } else { %>
