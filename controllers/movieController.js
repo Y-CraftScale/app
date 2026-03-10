@@ -41,19 +41,30 @@ exports.getMovieById = async (req, res) => {
     try {
         const movieId = req.params.id;
 
-        const [movie, similarMovies, comments] = await Promise.all([
+        // On récupère les infos TMDB (obligatoires)
+        const [movie, similarMovies] = await Promise.all([
             tmdbService.getMovieDetails(movieId),
-            tmdbService.getSimilarMovies(movieId),
-            Comment.getCommentsByMovie(movieId)
+            tmdbService.getSimilarMovies(movieId)
         ]);
 
         if (!movie) {
             return res.status(404).send('Film non trouvé');
         }
 
+        // On récupère les infos BDD (optionnelles - ne doit pas faire crash la page)
+        let comments = [];
         let userStatus = null;
-        if (req.session && req.session.userId) {
-            userStatus = await UserMovie.getMovieStatus(req.session.userId, movieId);
+
+        try {
+            const [commentsData, statusData] = await Promise.all([
+                Comment.getCommentsByMovie(movieId),
+                req.session && req.session.userId ? UserMovie.getMovieStatus(req.session.userId, movieId) : Promise.resolve(null)
+            ]);
+            comments = commentsData || [];
+            userStatus = statusData || null;
+        } catch (dbError) {
+            console.error("⚠️ La BDD est injoignable (échec récupération avis/status):", dbError.message);
+            // La page pourra quand même s'afficher sans les avis
         }
 
         res.render('movie-details', {
@@ -63,8 +74,8 @@ exports.getMovieById = async (req, res) => {
             userStatus
         });
     } catch (error) {
-        console.error("Erreur getMovieById:", error);
-        res.status(500).send('Erreur serveur');
+        console.error("Erreur critique getMovieById:", error);
+        res.status(500).send('Erreur serveur (Problème de connexion TMDB ou réseau)');
     }
 };
 
