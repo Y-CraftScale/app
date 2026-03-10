@@ -1,0 +1,21 @@
+<div class="auth-container">
+    <h1>Modifier mon Profil</h1>
+    <form action="/profile/edit" method="POST" class="auth-form">
+        <div class="input-group">
+            <label>Pseudo</label>
+            <input type="text" name="username" value="<%= locals.user.username %>" required>
+        </div>
+        <div class="input-group">
+            <label>Email</label>
+            <input type="email" name="email" value="<%= locals.user.email %>" required>
+        </div>
+        <div class="input-group">
+            <label>Bio</label>
+            <textarea name="bio" rows="4" style="width: 100%; padding: 1rem; background-color: #333; border: none; border-radius: 4px; color: white; resize: vertical;"><%= locals.user.bio || '' %></textarea>
+        </div>
+        <button type="submit" class="btn-primary">Enregistrer les modifications</button>
+    </form>
+    <div class="auth-links">
+        <p><a href="/dashboard">← Retourner au Dashboard</a></p>
+    </div>
+</div>

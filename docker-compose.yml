@@ -1,0 +1,29 @@
+services:
+  # Le service de Base de données
+  db:
+    image: mysql:8.0
+    container_name: app_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: SAE_401-appdb  # Doit correspondre à ton .env
+      MYSQL_DATABASE: app_db # Crée la BDD au démarrage !
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql # Pour ne pas perdre les données si on éteint
+
+  # L'interface graphique (comme dans XAMPP)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: app_pma
+    restart: always
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: SAE_401-appdb
+    ports:
+      - "8085:80"
+    depends_on:
+      - db
+
+volumes:
+  db_data:

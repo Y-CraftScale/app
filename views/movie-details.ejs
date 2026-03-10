@@ -1,0 +1,341 @@
+<div class="movie-details-wrapper" style="background-color: var(--bg-color); min-height: 100vh; padding-bottom: 4rem;">
+    <% if (locals.movie) { %>
+        <!-- BANNER SECTION -->
+        <div class="movie-banner"
+            style="position: relative; padding: 10rem 4% 4rem; background-image: linear-gradient(rgba(10,10,10,0.5), rgba(10,10,10,1)), url('https://image.tmdb.org/t/p/original<%= movie.backdrop_path || movie.poster_path %>'); background-size: cover; background-position: center;">
+            <div style="max-width: 1200px; margin: 0 auto; position: relative; z-index: 2;">
+                <h1
+                    style="font-size: 4rem; font-weight: 900; color: var(--accent-primary); font-style: italic; text-transform: uppercase;">
+                    <%= movie.title %> <span style="color: var(--text-primary); font-size: 2.5rem;">(<%=
+                                movie.release_date ? movie.release_date.substring(0,4) : '' %>)</span>
+                </h1>
+
+            </div>
+        </div>
+
+        <!-- MAIN MOVIE CONTENT -->
+        <div style="max-width: 1200px; margin: 0 auto; padding: 2rem 4%; display: flex; gap: 4rem; flex-wrap: wrap;">
+
+            <!-- LEFT COLUMN: POSTER & STATS -->
+            <div style="width: 250px; flex-shrink: 0; margin-top: -6rem; position: relative; z-index: 10;">
+
+                <div style="display: flex; gap: 0.8rem; margin-bottom: 1rem; align-items: center;">
+                    <a href="#" class="btn-white"
+                        style="flex: 1; margin: 0; padding: 0.6rem 1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; color: #0a0a0a; border-radius: 4px; font-weight: bold;">
+                        <span style="color: var(--accent-primary); display: flex; align-items: center;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                        </span> Lecture
+                    </a>
+
+                    <% if (locals.user) { %>
+                        <% if (locals.userStatus && locals.userStatus.is_watched===0) { %>
+                            <form action="/movie/watched/add" method="POST" style="margin: 0;">
+                                <input type="hidden" name="movieId" value="<%= movie.id %>">
+                                <button type="submit" class="btn-outline"
+                                    style="border-radius: 50%; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: #fff; border-color: #fff;"
+                                    title="Marquer comme vu">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                </button>
+                            </form>
+                            <% } else if (locals.userStatus && locals.userStatus.is_watched===1) { %>
+                                <span
+                                    style="color: var(--accent-primary); display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(255, 140, 0, 0.1); border-radius: 50%; border: 1px solid var(--accent-primary);"
+                                    title="Vu">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </span>
+                                <% } else { %>
+                                    <form action="/movie/watchlist/add" method="POST" style="margin: 0;">
+                                        <input type="hidden" name="movieId" value="<%= movie.id %>">
+                                        <input type="hidden" name="title" value="<%= movie.title %>">
+                                        <input type="hidden" name="poster_path" value="<%= movie.poster_path %>">
+                                        <input type="hidden" name="release_date" value="<%= movie.release_date %>">
+                                        <button type="submit" class="btn-outline"
+                                            style="border-radius: 50%; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: #fff; border-color: #fff;"
+                                            title="Ajouter à la Watchlist">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <line x1="12" y1="8" x2="12" y2="16"></line>
+                                                <line x1="8" y1="12" x2="16" y2="12"></line>
+                                            </svg>
+                                        </button>
+                                    </form>
+                                    <% } %>
+                                        <% } %>
+                </div>
+
+                <div
+                    style="border: 3px solid var(--accent-primary); border-radius: 12px; margin-bottom: 1.5rem; overflow: hidden; background-color: var(--surface-color);">
+                    <% if (movie.poster_path) { %>
+                        <img src="https://image.tmdb.org/t/p/w500<%= movie.poster_path %>" alt="<%= movie.title %>"
+                            style="width: 100%; display: block;">
+                        <% } else { %>
+                            <div class="no-poster" style="height: 350px; background-color: #111;">
+                                <%= movie.title %>
+                            </div>
+                            <% } %>
+                </div>
+
+                <div
+                    style="display: flex; justify-content: space-between; text-align: center; color: white; padding: 0 1rem;">
+                    <div>
+                        <div style="font-weight: 800; font-size: 1.1rem;">
+                            <%= movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A' %>
+                        </div>
+                        <div style="font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase;">NOTE
+                            MOYENNE</div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 800; font-size: 1.1rem;">
+                            <%= movie.vote_count || 0 %>
+                        </div>
+                        <div style="font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase;">AVIS
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 800; font-size: 1.1rem;">
+                            <%= movie.popularity ? movie.popularity.toFixed(0) : 0 %>K
+                        </div>
+                        <div style="font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase;">J'AIME
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: INFO & REVIEWS -->
+            <div style="flex: 1; min-width: 300px; padding-top: 2rem;">
+                <div style="margin-bottom: 3rem;">
+                    <p style="font-size: 1rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+                        <span style="color: white; font-weight: bold;">Directed by</span>
+                        <span style="font-style: italic;">
+                            <% /* Fetching director dynamically isn't strictly requested to fix in controller, fallback
+                                to standard or basic */ %>
+                                NON RENSEIGNÉ
+                        </span>
+
+                        <% if (movie.genres && movie.genres.length> 0) { %>
+                            <span style="margin-left: 1rem; color: white; font-weight: bold;">Genres:</span>
+                            <%= movie.genres.map(g=> g.name).join(', ') %>
+                                <% } %>
+                    </p>
+
+                    <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-primary);">Synopsis :</h3>
+                    <p style="color: var(--text-secondary); line-height: 1.6; font-size: 0.95rem;">
+                        <%= movie.overview || "Aucun synopsis disponible pour ce titre." %>
+                    </p>
+                </div>
+
+                <div style="margin-top: 3rem;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                        <h3 style="font-size: 1.2rem; font-weight: bold;">Critiques Récentes :</h3>
+                        <% if (locals.user) { %>
+                            <a href="#avis-form"
+                                style="color: var(--accent-primary); font-weight: bold; text-decoration: none; font-size: 0.9rem;">écrire
+                                un avis</a>
+                            <% } %>
+                    </div>
+
+                    <div class="comments-list" style="display: flex; flex-direction: column; gap: 2rem;">
+                        <% if (locals.comments && comments.length> 0) { %>
+                            <% comments.forEach(comment=> { %>
+                                <div class="comment" style="display: flex; gap: 1rem;">
+                                    <div
+                                        style="width: 40px; height: 40px; border-radius: 50%; background-color: white; flex-shrink: 0;">
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <div
+                                            style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
+                                            <strong
+                                                style="color: var(--accent-primary); text-transform: uppercase; font-size: 0.9rem;">
+                                                <%= comment.username %>
+                                            </strong>
+                                            <div style="color: var(--accent-primary); display: flex; gap: 2px;">
+                                                <% for(let i=1; i<=5; i++) { %>
+                                                    <% if (i <=(comment.rating || 0)) { %>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                                            viewBox="0 0 24 24" fill="currentColor"
+                                                            stroke="currentColor" stroke-width="2"
+                                                            stroke-linecap="round" stroke-linejoin="round"
+                                                            style="color: var(--accent-primary);">
+                                                            <polygon
+                                                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                                                            </polygon>
+                                                        </svg>
+                                                        <% } else { %>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14"
+                                                                height="14" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round"
+                                                                style="color: #555;">
+                                                                <polygon
+                                                                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                                                                </polygon>
+                                                            </svg>
+                                                            <% } %>
+                                                                <% } %>
+                                            </div>
+                                        </div>
+                                        <p
+                                            style="margin: 0; line-height: 1.5; font-size: 0.9rem; color: var(--text-primary); margin-bottom: 0.5rem;">
+                                            <%= comment.content %>
+                                        </p>
+                                        <small style="color: var(--text-secondary); font-size: 0.75rem;">
+                                            <%= new Date(comment.created_at).toLocaleDateString() %>
+                                        </small>
+                                    </div>
+                                </div>
+                                <% }) %>
+                                    <% } else { %>
+                                        <p style="color: var(--text-secondary); font-style: italic;">Aucun avis pour le
+                                            moment. Soyez le premier !</p>
+                                        <% } %>
+                    </div>
+                </div>
+
+                <!-- LAISSER UN AVIS MODAL/FORM -->
+                <% if (locals.user) { %>
+                    <div id="avis-form"
+                        style="margin-top: 4rem; background-color: rgba(26, 20, 15, 0.4); padding: 2.5rem; border-radius: 12px; border: 1px solid rgba(255, 140, 0, 0.3);">
+                        <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: white;">Laisser un avis</h2>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 2rem;">Partagez votre
+                            expérience cinématographique avec la communauté.</p>
+
+                        <form action="/movie/comment" method="POST">
+                            <input type="hidden" name="movieId" value="<%= movie.id %>">
+                            <input type="hidden" name="title" value="<%= movie.title %>">
+                            <input type="hidden" name="poster_path" value="<%= movie.poster_path %>">
+                            <input type="hidden" name="release_date" value="<%= movie.release_date %>">
+
+                            <style>
+                                .star-rating {
+                                    display: flex;
+                                    flex-direction: row-reverse;
+                                    justify-content: flex-end;
+                                    gap: 0.5rem;
+                                }
+
+                                .star-rating input {
+                                    display: none;
+                                }
+
+                                .star-rating label {
+                                    cursor: pointer;
+                                    color: #555;
+                                }
+
+                                .star-rating label svg {
+                                    width: 24px;
+                                    height: 24px;
+                                    transition: all 0.2s;
+                                }
+
+                                .star-rating input:checked~label,
+                                .star-rating label:hover,
+                                .star-rating label:hover~label {
+                                    color: var(--accent-primary);
+                                }
+
+                                .star-rating input:checked~label svg,
+                                .star-rating label:hover svg,
+                                .star-rating label:hover~label svg,
+                                .star-rating input:checked+label svg {
+                                    fill: currentColor;
+                                }
+                            </style>
+                            <div style="margin-bottom: 1.5rem;">
+                                <label
+                                    style="display: block; color: var(--accent-primary); font-weight: bold; margin-bottom: 0.5rem;">Votre
+                                    Note</label>
+                                <div class="star-rating">
+                                    <input type="radio" id="star5" name="rating" value="5" /><label for="star5"
+                                        title="5 étoiles"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <polygon
+                                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                                            </polygon>
+                                        </svg></label>
+                                    <input type="radio" id="star4" name="rating" value="4" /><label for="star4"
+                                        title="4 étoiles"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <polygon
+                                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                                            </polygon>
+                                        </svg></label>
+                                    <input type="radio" id="star3" name="rating" value="3" /><label for="star3"
+                                        title="3 étoiles"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <polygon
+                                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                                            </polygon>
+                                        </svg></label>
+                                    <input type="radio" id="star2" name="rating" value="2" /><label for="star2"
+                                        title="2 étoiles"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <polygon
+                                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                                            </polygon>
+                                        </svg></label>
+                                    <input type="radio" id="star1" name="rating" value="1" required /><label for="star1"
+                                        title="1 étoile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <polygon
+                                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                                            </polygon>
+                                        </svg></label>
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom: 2rem;">
+                                <label
+                                    style="display: block; color: var(--accent-primary); font-weight: bold; margin-bottom: 0.5rem;">Votre
+                                    Commentaire</label>
+                                <textarea name="content" rows="5" required
+                                    style="width: 100%; padding: 1rem; background-color: #000; border: 1px solid var(--border-color); color: white; border-radius: 6px; resize: vertical; font-family: inherit; font-size: 0.9rem;"></textarea>
+                            </div>
+
+                            <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+                                <div
+                                    style="display: flex; gap: 0.5rem; color: var(--text-secondary); font-size: 0.8rem; align-items: flex-start;">
+                                    <span style="color: var(--accent-primary);">●</span>
+                                    <span>Votre avis sera soumis à modération<br>avant d'être publié.</span>
+                                </div>
+                                <button type="submit" class="btn-filled"
+                                    style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Publier mon avis</button>
+                            </div>
+                        </form>
+                    </div>
+                    <% } else { %>
+                        <p
+                            style="margin-top: 4rem; padding: 2rem; background-color: var(--surface-color); border-radius: 8px; text-align: center;">
+                            <a href="/login" style="color: var(--accent-primary); font-weight: bold;">Connectez-vous</a>
+                            pour laisser un avis.
+                        </p>
+                        <% } %>
+
+            </div>
+        </div>
+
+        <% } else { %>
+            <div class="alert alert-error" style="margin: 4rem;">Film introuvable.</div>
+            <% } %>
+</div>

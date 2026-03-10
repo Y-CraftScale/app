@@ -1,0 +1,132 @@
+<div class="dashboard-header auth-container" style="max-width: 1000px; margin: 2rem auto; padding: 2rem;">
+    <h1 style="color: #e50914;">⚙️ Espace Administrateur</h1>
+    <p>Gérez les membres de CineAddict et modérez les commentaires.</p>
+</div>
+
+<div class="lists-container"
+    style="display: flex; flex-direction: column; gap: 4rem; max-width: 1200px; margin: 0 auto; padding: 2rem;">
+
+    <!-- SECTION UTILISATEURS -->
+    <section>
+        <h2 style="border-bottom: 2px solid #333; padding-bottom: 0.5rem;">👥 Gestion des Membres</h2>
+        <div
+            style="background-color: #111; border-radius: 8px; overflow: hidden; margin-top: 1rem; border: 1px solid #333;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr style="background-color: #222; border-bottom: 1px solid #444;">
+                        <th style="padding: 1rem;">ID</th>
+                        <th style="padding: 1rem;">Pseudo</th>
+                        <th style="padding: 1rem;">Email</th>
+                        <th style="padding: 1rem;">Rôle</th>
+                        <th style="padding: 1rem;">Statut</th>
+                        <th style="padding: 1rem;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (locals.users && users.length> 0) { %>
+                        <% users.forEach(u=> { %>
+                            <tr style="border-bottom: 1px solid #222;">
+                                <td style="padding: 1rem;">
+                                    <%= u.id %>
+                                </td>
+                                <td style="padding: 1rem; font-weight: bold;">
+                                    <%= u.username %>
+                                </td>
+                                <td style="padding: 1rem;">
+                                    <%= u.email %>
+                                </td>
+                                <td style="padding: 1rem;">
+                                    <% if (u.is_admin) { %>
+                                        <span style="color: #e50914; font-weight: bold;">Admin</span>
+                                        <% } else { %>
+                                            Membre
+                                            <% } %>
+                                </td>
+                                <td style="padding: 1rem;">
+                                    <% if (u.is_banned) { %>
+                                        <span style="color: var(--danger); font-weight: bold;">🚫 Banni</span>
+                                        <% } else { %>
+                                            <span style="color: #28a745;">✅ Actif</span>
+                                            <% } %>
+                                </td>
+                                <td style="padding: 1rem;">
+                                    <% if (!u.is_admin) { %>
+                                        <form action="/admin/ban/<%= u.id %>" method="POST" style="margin: 0;">
+                                            <input type="hidden" name="currentStatus"
+                                                value="<%= u.is_banned ? 1 : 0 %>">
+                                            <% if (u.is_banned) { %>
+                                                <button type="submit" class="btn-primary"
+                                                    style="background-color: #ffb400; padding: 0.5rem; font-size: 0.8rem;">Débannir</button>
+                                                <% } else { %>
+                                                    <button type="submit" class="btn-primary"
+                                                        style="background-color: var(--danger); padding: 0.5rem; font-size: 0.8rem;">Bannir</button>
+                                                    <% } %>
+                                        </form>
+                                        <% } else { %>
+                                            <span
+                                                style="color: #666; font-size: 0.9rem; font-style: italic;">Intouchable</span>
+                                            <% } %>
+                                </td>
+                            </tr>
+                            <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="6" style="padding: 2rem; text-align: center;">Aucun utilisateur
+                                            trouvé.</td>
+                                    </tr>
+                                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- SECTION COMMENTAIRES -->
+    <section>
+        <h2
+            style="border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            Modération des Avis
+        </h2>
+        <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+            <% if (locals.comments && comments.length> 0) { %>
+                <% comments.forEach(comment=> { %>
+                    <div
+                        style="background-color: #111; padding: 1.5rem; border-radius: 8px; border: 1px solid #333; display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div style="max-width: 80%;">
+                            <p style="margin: 0 0 0.5rem; font-size: 0.9rem;">
+                                <strong>
+                                    <%= comment.username %>
+                                </strong> sur
+                                <a href="/movie/<%= comment.movie_id %>"
+                                    style="color: var(--accent-blue); text-decoration: none;">
+                                    <%= comment.movie_title %>
+                                </a>
+                                <span style="color: #666; margin-left: 0.5rem;">
+                                    <%= new Date(comment.created_at).toLocaleDateString() %>
+                                </span>
+                            </p>
+                            <p style="margin: 0; color: #ddd; line-height: 1.5;">
+                                <%= comment.content %>
+                            </p>
+                        </div>
+                        <form action="/admin/comment/delete/<%= comment.id %>" method="POST">
+                            <button type="submit" class="btn-primary"
+                                style="background-color: var(--danger); padding: 0.5rem 1rem;"
+                                onclick="return confirm('Supprimer définitivement ce commentaire ?');">🗑️
+                                Supprimer</button>
+                        </form>
+                    </div>
+                    <% }) %>
+                        <% } else { %>
+                            <div
+                                style="background-color: #111; padding: 2rem; border-radius: 8px; text-align: center; border: 1px solid #333;">
+                                <p>Aucun commentaire à modérer.</p>
+                            </div>
+                            <% } %>
+        </div>
+    </section>
+
+</div>

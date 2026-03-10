@@ -1,0 +1,71 @@
+<div class="dashboard-header auth-container" style="margin-top: 2rem; margin-bottom: 3rem; padding: 2rem;">
+    <h1>Profil de <%= targetUser.username %>
+    </h1>
+    <% if (targetUser.bio) { %>
+        <p style="font-style: italic; color: #ccc;">"<%= targetUser.bio %>"</p>
+        <% } %>
+
+            <!-- Friend feature removed per user request -->
+</div>
+
+<div class="lists-container">
+    <section class="movie-section">
+        <h2>📌 Watchlist de <%= targetUser.username %>
+        </h2>
+        <div class="movie-grid">
+            <% if (locals.watchlist && watchlist.length> 0) { %>
+                <% watchlist.forEach(movie=> { %>
+                    <div class="movie-card">
+                        <a href="/movie/<%= movie.movie_id %>">
+                            <% if (movie.poster_path) { %>
+                                <img src="https://image.tmdb.org/t/p/w500<%= movie.poster_path %>"
+                                    alt="<%= movie.title %>">
+                                <% } else { %>
+                                    <div class="no-poster">
+                                        <%= movie.title %>
+                                    </div>
+                                    <% } %>
+                                        <div class="movie-info">
+                                            <h3>
+                                                <%= movie.title %>
+                                            </h3>
+                                        </div>
+                        </a>
+                    </div>
+                    <% }) %>
+                        <% } else { %>
+                            <p>Aucun film dans sa Watchlist.</p>
+                            <% } %>
+        </div>
+    </section>
+
+    <section class="movie-section" style="margin-top: 4rem;">
+        <h2>👁️ Films vus par <%= targetUser.username %>
+        </h2>
+        <div class="movie-grid">
+            <% if (locals.watchedMovies && watchedMovies.length> 0) { %>
+                <% watchedMovies.forEach(movie=> { %>
+                    <div class="movie-card">
+                        <a href="/movie/<%= movie.movie_id %>">
+                            <% if (movie.poster_path) { %>
+                                <img src="https://image.tmdb.org/t/p/w500<%= movie.poster_path %>"
+                                    alt="<%= movie.title %>" style="opacity: 0.7;">
+                                <% } else { %>
+                                    <div class="no-poster">
+                                        <%= movie.title %>
+                                    </div>
+                                    <% } %>
+                                        <div class="movie-info">
+                                            <h3>
+                                                <%= movie.title %>
+                                            </h3>
+                                        </div>
+                        </a>
+                    </div>
+                    <% }) %>
+                        <% } else { %>
+                            <p>Aucun film marqué comme vu.</p>
+                            <% } %>
+        </div>
+    </section>
+</div>

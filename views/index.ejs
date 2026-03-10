@@ -1,0 +1,139 @@
+<div class="home-container">
+    <section class="hero">
+        <div class="hero-showcase">
+            <% for(let i=0; i < 3; i++) { %>
+                <div class="showcase-row">
+                    <% if (locals.trendingMovies && trendingMovies.length> 0) { %>
+                        <% trendingMovies.concat(trendingMovies).forEach(movie=> { %>
+                            <div class="showcase-poster">
+                                <img src="https://image.tmdb.org/t/p/w500<%= movie.poster_path %>" alt="">
+                            </div>
+                            <% }) %>
+                                <% } else { %>
+                                    <% for(let j=0; j < 10; j++) { %>
+                                        <div class="showcase-poster">
+                                            <div class="no-poster">Film</div>
+                                        </div>
+                                        <% } %>
+                                            <% } %>
+                </div>
+                <% } %>
+        </div>
+
+        <div class="hero-content" style="max-width: 600px; padding: 2rem; position: relative; z-index: 10;">
+            <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem;">Donnez de la voix à vos films
+                préférés.</h1>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 1.1rem;">Notez, critiquez et
+                partagez vos pépites cinématographiques.</p>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem; font-size: 1.1rem;">Prêt à partager votre
+                premier avis ? Inscrivez-vous dès maintenant.</p>
+            <% if (!locals.user) { %>
+                <a href="/register" class="btn-filled">S'inscrire</a>
+                <% } %>
+        </div>
+    </section>
+
+    <section class="movie-section">
+        <h2>Tendance à la une</h2>
+        <div class="movie-scroller">
+            <% if (locals.trendingMovies && trendingMovies.length> 0) { %>
+                <% trendingMovies.forEach(movie=> { %>
+                    <a href="/movie/<%= movie.id %>" class="movie-card">
+                        <% if (movie.poster_path) { %>
+                            <img src="https://image.tmdb.org/t/p/w500<%= movie.poster_path %>" alt="<%= movie.title %>">
+                            <% } else { %>
+                                <div class="no-poster">
+                                    <%= movie.title %>
+                                </div>
+                                <% } %>
+                                    <div class="movie-info">
+                                        <h3>
+                                            <%= movie.title %>
+                                        </h3>
+                                        <span class="rating" style="display: flex; align-items: center; gap: 0.25rem;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                                viewBox="0 0 24 24" fill="#ffb400" stroke="#ffb400" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <polygon
+                                                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                                                </polygon>
+                                            </svg>
+                                            <%= movie.vote_average.toFixed(1) %>
+                                        </span>
+                                    </div>
+                    </a>
+                    <% }) %>
+                        <% } else { %>
+                            <p>Aucune tendance disponible.</p>
+                            <% } %>
+        </div>
+    </section>
+
+    <section class="section-orange">
+        <h2>Les mieux notés</h2>
+        <div class="movie-scroller">
+            <% if (locals.topRatedMovies && topRatedMovies.length> 0) { %>
+                <% topRatedMovies.forEach(movie=> { %>
+                    <a href="/movie/<%= movie.id %>" class="movie-card"
+                        style="background-color: transparent; border: none; box-shadow: none;">
+                        <% if (movie.poster_path) { %>
+                            <img src="https://image.tmdb.org/t/p/w500<%= movie.poster_path %>" alt="<%= movie.title %>"
+                                style="border-radius: 8px;">
+                            <% } else { %>
+                                <div class="no-poster">
+                                    <%= movie.title %>
+                                </div>
+                                <% } %>
+                                    <div class="movie-info" style="padding: 1rem 0;">
+                                        <h3 style="color: white; font-weight: 600;">
+                                            <%= movie.title %>
+                                        </h3>
+                                        <span class="rating" style="color: white; font-weight: 400; font-size: 0.9rem;">
+                                            <%= movie.release_date ? movie.release_date.substring(0,4) : 'N/A' %>
+                                        </span>
+                                    </div>
+                    </a>
+                    <% }) %>
+                        <% } else { %>
+                            <p>Aucun film disponible.</p>
+                            <% } %>
+        </div>
+        <a href="/search" class="btn-white" style="margin-top: 2rem;">Voir plus</a>
+    </section>
+
+    <section class="movie-section">
+        <h2>Populaires</h2>
+        <div class="movie-scroller">
+            <% if (locals.popularMovies && popularMovies.length> 0) { %>
+                <% popularMovies.forEach(movie=> { %>
+                    <a href="/movie/<%= movie.id %>" class="movie-card">
+                        <% if (movie.poster_path) { %>
+                            <img src="https://image.tmdb.org/t/p/w500<%= movie.poster_path %>" alt="<%= movie.title %>">
+                            <% } else { %>
+                                <div class="no-poster">
+                                    <%= movie.title %>
+                                </div>
+                                <% } %>
+                                    <div class="movie-info">
+                                        <h3>
+                                            <%= movie.title %>
+                                        </h3>
+                                        <span class="rating" style="display: flex; align-items: center; gap: 0.25rem;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                                viewBox="0 0 24 24" fill="#ffb400" stroke="#ffb400" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <polygon
+                                                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                                                </polygon>
+                                            </svg>
+                                            <%= movie.vote_average.toFixed(1) %>
+                                        </span>
+                                    </div>
+                    </a>
+                    <% }) %>
+                        <% } else { %>
+                            <p>Aucun film populaire disponible.</p>
+                            <% } %>
+        </div>
+    </section>
+</div>
