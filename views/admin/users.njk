@@ -1,0 +1,39 @@
+{% extends "layout.njk" %}
+
+{% block title %}Gestion Utilisateurs - CineAddict{% endblock %}
+
+{% block content %}
+<h1>Gestion Utilisateurs</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nom</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {# On vérifie si la liste existe et n'est pas vide #}
+        {% if users and users.length > 0 %}
+            {% for u in users %}
+                <tr>
+                    <td>{{ u.id }}</td>
+                    <td>{{ u.username }}</td>
+                    <td>
+                        <form action="/admin/ban/{{ u.id }}" method="POST">
+                            <button type="submit" class="btn-primary">Bannir</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="3" style="text-align: center; padding: 1rem;">
+                    Aucun utilisateur à afficher.
+                </td>
+            </tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endblock %}

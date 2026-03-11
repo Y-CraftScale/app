@@ -1,0 +1,32 @@
+{% extends "layout.njk" %}
+
+{% block title %}Résultats pour "{{ query }}" - CineAddict{% endblock %}
+
+{% block content %}
+<div class="search-container">
+    <h2>Résultats pour "{{ query }}"</h2>
+    
+    <div class="movie-grid">
+        {% if movies and movies.length > 0 %}
+            {% for movie in movies %}
+                <a href="/movie/{{ movie.id }}" class="movie-card">
+                    {% if movie.poster_path %}
+                        <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}" alt="{{ movie.title }}">
+                    {% else %}
+                        <div class="no-poster">{{ movie.title }}</div>
+                    {% endif %}
+                    
+                    <div class="movie-info">
+                        <h3>{{ movie.title }}</h3>
+                        <span class="rating">
+                            ⭐ {{ movie.vote_average | round(1) if movie.vote_average else 'N/A' }}
+                        </span>
+                    </div>
+                </a>
+            {% endfor %}
+        {% else %}
+            <p>Aucun résultat trouvé pour votre recherche.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "layout.njk" %}
+
+{% block title %}Erreur - CineAddict{% endblock %}
+
+{% block content %}
+<div style="text-align: center; margin-top: 5rem;">
+    <h1>Erreur</h1>
+    <p>
+        {# On utilise 'or' pour la valeur par défaut. Plus besoin de 'locals.' #}
+        {{ message or 'Une erreur est survenue' }}
+    </p>
+    <br>
+    <a href="/" class="btn-primary">Retour accueil</a>
+</div>
+{% endblock %}

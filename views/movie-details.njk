@@ -1,113 +1,120 @@
+{% extends "layout.njk" %}
+
+{% block title %}{{ movie.title if movie else "Film introuvable" }} - CineAddict{% endblock %}
+
+{% block content %}
 <div class="movie-details-container">
-    <% if (locals.movie) { %>
+    {% if movie %}
         <div class="movie-header">
-            <% if (movie.poster_path) { %>
-                <img src="https://image.tmdb.org/t/p/w500<%= movie.poster_path %>" alt="<%= movie.title %>" class="movie-poster-large">
-            <% } else { %>
-                <div class="no-poster-large"><%= movie.title %></div>
-            <% } %>
+            {% if movie.poster_path %}
+                <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}" alt="{{ movie.title }}" class="movie-poster-large">
+            {% else %}
+                <div class="no-poster-large">{{ movie.title }}</div>
+            {% endif %}
             
             <div class="movie-info-large">
-                <h1><%= movie.title %></h1>
-                <p class="tagline"><%= movie.tagline %></p>
+                <h1>{{ movie.title }}</h1>
+                <p class="tagline">{{ movie.tagline }}</p>
                 
                 <div class="meta-data">
-                    <span class="rating">⭐ <%= movie.vote_average.toFixed(1) %></span>
-                    <span class="release-date">📅 <%= new Date(movie.release_date).toLocaleDateString() %></span>
-                    <span class="runtime">⏱️ <%= movie.runtime %> min</span>
+                    <span class="rating">⭐ {{ movie.vote_average | round(1) }}</span>
+                    <span class="release-date">📅 {{ movie.release_date }}</span>
+                    <span class="runtime">⏱️ {{ movie.runtime }} min</span>
                 </div>
 
                 <div class="overview">
                     <h3>Synopsis</h3>
-                    <p><%= movie.overview %></p>
+                    <p>{{ movie.overview }}</p>
                 </div>
 
-                <% if (locals.providers && (providers.flatrate || providers.rent || providers.buy)) { %>
+                {# SECTION WATCH DISPONIBILITÉ #}
+                {% if providers and (providers.flatrate or providers.rent or providers.buy) %}
                     <div class="providers-section" style="margin-top: 1.5rem; background-color: #1a1a1a; padding: 1rem; border-radius: 8px;">
                         <h3 style="margin-top: 0; font-size: 1.1rem; border-bottom: 1px solid #333; padding-bottom: 0.5rem; margin-bottom: 1rem;">Où regarder en France ?</h3>
                         <div style="display: flex; flex-direction: column; gap: 1rem;">
                             
-                            <% if (providers.flatrate) { %>
+                            {% if providers.flatrate %}
                                 <div>
                                     <strong style="color: #bbb; font-size: 0.9rem;">En Streaming (Abonnement) :</strong>
                                     <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap;">
-                                        <% providers.flatrate.forEach(prov => { %>
-                                            <img src="https://image.tmdb.org/t/p/original<%= prov.logo_path %>" alt="<%= prov.provider_name %>" title="<%= prov.provider_name %>" style="width: 40px; height: 40px; border-radius: 8px; border: 1px solid #333;">
-                                        <% }) %>
+                                        {% for prov in providers.flatrate %}
+                                            <img src="https://image.tmdb.org/t/p/original{{ prov.logo_path }}" alt="{{ prov.provider_name }}" title="{{ prov.provider_name }}" style="width: 40px; height: 40px; border-radius: 8px; border: 1px solid #333;">
+                                        {% endfor %}
                                     </div>
                                 </div>
-                            <% } %>
+                            {% endif %}
 
-                            <% if (providers.rent) { %>
+                            {% if providers.rent %}
                                 <div>
                                     <strong style="color: #bbb; font-size: 0.9rem;">En Location :</strong>
                                     <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap;">
-                                        <% providers.rent.forEach(prov => { %>
-                                            <img src="https://image.tmdb.org/t/p/original<%= prov.logo_path %>" alt="<%= prov.provider_name %>" title="<%= prov.provider_name %>" style="width: 40px; height: 40px; border-radius: 8px; border: 1px solid #333;">
-                                        <% }) %>
+                                        {% for prov in providers.rent %}
+                                            <img src="https://image.tmdb.org/t/p/original{{ prov.logo_path }}" alt="{{ prov.provider_name }}" title="{{ prov.provider_name }}" style="width: 40px; height: 40px; border-radius: 8px; border: 1px solid #333;">
+                                        {% endfor %}
                                     </div>
                                 </div>
-                            <% } %>
+                            {% endif %}
 
-                            <% if (providers.buy) { %>
+                            {% if providers.buy %}
                                 <div>
                                     <strong style="color: #bbb; font-size: 0.9rem;">À l'Achat :</strong>
                                     <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap;">
-                                        <% providers.buy.forEach(prov => { %>
-                                            <img src="https://image.tmdb.org/t/p/original<%= prov.logo_path %>" alt="<%= prov.provider_name %>" title="<%= prov.provider_name %>" style="width: 40px; height: 40px; border-radius: 8px; border: 1px solid #333;">
-                                        <% }) %>
+                                        {% for prov in providers.buy %}
+                                            <img src="https://image.tmdb.org/t/p/original{{ prov.logo_path }}" alt="{{ prov.provider_name }}" title="{{ prov.provider_name }}" style="width: 40px; height: 40px; border-radius: 8px; border: 1px solid #333;">
+                                        {% endfor %}
                                     </div>
                                 </div>
-                            <% } %>
-                            
+                            {% endif %}
                         </div>
                     </div>
-                <% } %>
+                {% endif %}
 
-                <% if (locals.user) { %>
-                    <% if (locals.userStatus && locals.userStatus.is_watched === 0) { %>
+                {# ACTIONS UTILISATEUR (Watchlist / Vu) #}
+                {% if user %}
+                    {% if userStatus and userStatus.is_watched === 0 %}
                         <div style="display: flex; gap: 1rem; margin-top: 1rem;">
                             <form action="/movie/watched/add" method="POST" class="action-form">
-                                <input type="hidden" name="movieId" value="<%= movie.id %>">
+                                <input type="hidden" name="movieId" value="{{ movie.id }}">
                                 <button type="submit" class="btn-primary" style="background-color: #ffb400;">👁️ Marquer comme vu</button>
                             </form>
                             <form action="/movie/remove" method="POST" class="action-form">
-                                <input type="hidden" name="movieId" value="<%= movie.id %>">
+                                <input type="hidden" name="movieId" value="{{ movie.id }}">
                                 <button type="submit" class="btn-primary" style="background-color: var(--danger);">❌ Retirer de ma Watchlist</button>
                             </form>
                         </div>
-                    <% } else if (locals.userStatus && locals.userStatus.is_watched === 1) { %>
+                    {% elif userStatus and userStatus.is_watched === 1 %}
                         <div style="display: flex; gap: 1rem; margin-top: 1rem;">
                             <span style="padding: 1rem; color: #ffb400; font-weight: bold;">✔️ Vous avez vu ce film</span>
                             <form action="/movie/remove" method="POST" class="action-form">
-                                <input type="hidden" name="movieId" value="<%= movie.id %>">
+                                <input type="hidden" name="movieId" value="{{ movie.id }}">
                                 <button type="submit" class="btn-primary" style="background-color: var(--danger);">❌ Oublier ce film</button>
                             </form>
                         </div>
-                    <% } else { %>
+                    {% else %}
                         <form action="/movie/watchlist/add" method="POST" class="action-form" style="margin-top: 1rem;">
-                            <input type="hidden" name="movieId" value="<%= movie.id %>">
-                            <input type="hidden" name="title" value="<%= movie.title %>">
-                            <input type="hidden" name="poster_path" value="<%= movie.poster_path %>">
-                            <input type="hidden" name="release_date" value="<%= movie.release_date %>">
+                            <input type="hidden" name="movieId" value="{{ movie.id }}">
+                            <input type="hidden" name="title" value="{{ movie.title }}">
+                            <input type="hidden" name="poster_path" value="{{ movie.poster_path }}">
+                            <input type="hidden" name="release_date" value="{{ movie.release_date }}">
                             <button type="submit" class="btn-primary">➕ Ajouter à ma Watchlist</button>
                         </form>
-                    <% } %>
-                <% } else { %>
+                    {% endif %}
+                {% else %}
                     <p class="auth-prompt"><a href="/login" style="color: var(--accent-blue); text-decoration: underline;">Connectez-vous</a> pour l'ajouter à vos listes.</p>
-                <% } %>
+                {% endif %}
             </div>
         </div>
 
+        {# SECTION COMMENTAIRES #}
         <div class="comments-section" style="margin-top: 3rem; background-color: #111; padding: 2rem; border-radius: 8px;">
             <h3>💬 Avis et Commentaires</h3>
             
-            <% if (locals.user) { %>
+            {% if user %}
                 <form action="/movie/comment" method="POST" style="margin-bottom: 2rem;">
-                    <input type="hidden" name="movieId" value="<%= movie.id %>">
-                    <input type="hidden" name="title" value="<%= movie.title %>">
-                    <input type="hidden" name="poster_path" value="<%= movie.poster_path %>">
-                    <input type="hidden" name="release_date" value="<%= movie.release_date %>">
+                    <input type="hidden" name="movieId" value="{{ movie.id }}">
+                    <input type="hidden" name="title" value="{{ movie.title }}">
+                    <input type="hidden" name="poster_path" value="{{ movie.poster_path }}">
+                    <input type="hidden" name="release_date" value="{{ movie.release_date }}">
                     <select name="rating" required style="width: 100%; padding: 1rem; background-color: #222; border: 1px solid #333; color: white; border-radius: 4px; margin-bottom: 1rem;">
                         <option value="" disabled selected>Notez ce film (sur 5)</option>
                         <option value="5">⭐⭐⭐⭐⭐ 5/5 - Chef-d'œuvre</option>
@@ -119,57 +126,60 @@
                     <textarea name="content" rows="3" placeholder="Partagez votre avis sur ce film..." required style="width: 100%; padding: 1rem; background-color: #222; border: 1px solid #333; color: white; border-radius: 4px; resize: vertical; margin-bottom: 1rem;"></textarea>
                     <button type="submit" class="btn-primary">Publier mon avis</button>
                 </form>
-            <% } else { %>
+            {% else %}
                 <p style="margin-bottom: 2rem;"><a href="/login" style="color: var(--accent-blue);">Connectez-vous</a> pour laisser un avis.</p>
-            <% } %>
+            {% endif %}
 
             <div class="comments-list">
-                <% if (locals.comments && comments.length > 0) { %>
-                    <% comments.forEach(comment => { %>
+                {% if comments and comments.length > 0 %}
+                    {% for comment in comments %}
                         <div class="comment" style="padding: 1rem; border-bottom: 1px solid #333; margin-bottom: 1rem;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
                                 <div>
-                                    <strong><a href="/user/<%= comment.user_id %>" style="color: var(--accent-blue); text-decoration: none;"><%= comment.username %></a></strong>
-                                    <% if (comment.rating) { %>
+                                    <strong><a href="/user/{{ comment.user_id }}" style="color: var(--accent-blue); text-decoration: none;">{{ comment.username }}</a></strong>
+                                    {% if comment.rating %}
                                         <span style="color: #ffb400; margin-left: 0.5rem;">
-                                            <%= '⭐'.repeat(comment.rating) %> (<%= comment.rating %>/5)
+                                            {# Note: Pour répéter les étoiles, on peut utiliser une boucle simple ou gérer ça en CSS #}
+                                            {% for i in range(0, comment.rating) %}⭐{% endfor %} ({{ comment.rating }}/5)
                                         </span>
-                                    <% } %>
+                                    {% endif %}
                                 </div>
-                                <small style="color: #666;"><%= new Date(comment.created_at).toLocaleDateString() %></small>
+                                <small style="color: #666;">{{ comment.created_at }}</small>
                             </div>
-                            <p style="margin: 0; line-height: 1.5; color: #ddd;"><%= comment.content %></p>
+                            <p style="margin: 0; line-height: 1.5; color: #ddd;">{{ comment.content }}</p>
                         </div>
-                    <% }) %>
-                <% } else { %>
+                    {% endfor %}
+                {% else %}
                     <p style="color: #666; font-style: italic;">Aucun avis pour le moment. Soyez le premier !</p>
-                <% } %>
+                {% endif %}
             </div>
         </div>
 
+        {# FILMS SIMILAIRES #}
         <div class="similar-movies-section">
             <h3>Films similaires</h3>
             <div class="movie-grid">
-                <% if (locals.similarMovies && similarMovies.length > 0) { %>
-                    <% similarMovies.forEach(sim => { %>
-                        <a href="/movie/<%= sim.id %>" class="movie-card">
-                            <% if (sim.poster_path) { %>
-                                <img src="https://image.tmdb.org/t/p/w500<%= sim.poster_path %>" alt="<%= sim.title %>">
-                            <% } else { %>
-                                <div class="no-poster"><%= sim.title %></div>
-                            <% } %>
+                {% if similarMovies and similarMovies.length > 0 %}
+                    {% for sim in similarMovies %}
+                        <a href="/movie/{{ sim.id }}" class="movie-card">
+                            {% if sim.poster_path %}
+                                <img src="https://image.tmdb.org/t/p/w500{{ sim.poster_path }}" alt="{{ sim.title }}">
+                            {% else %}
+                                <div class="no-poster">{{ sim.title }}</div>
+                            {% endif %}
                             <div class="movie-info">
-                                <h4><%= sim.title %></h4>
+                                <h4>{{ sim.title }}</h4>
                             </div>
                         </a>
-                    <% }) %>
-                <% } else { %>
+                    {% endfor %}
+                {% else %}
                     <p>Aucun film similaire trouvé.</p>
-                <% } %>
+                {% endif %}
             </div>
         </div>
 
-    <% } else { %>
+    {% else %}
         <div class="alert alert-error">Film introuvable.</div>
-    <% } %>
+    {% endif %}
 </div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "layout.njk" %}
+
+{% block title %}Modifier mon Profil - CineAddict{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <h1>Modifier mon Profil</h1>
+    
+    <form action="/profile/edit" method="POST" class="auth-form">
+        <div class="input-group">
+            <label>Pseudo</label>
+            <input type="text" name="username" value="{{ user.username }}" required>
+        </div>
+        
+        <div class="input-group">
+            <label>Email</label>
+            <input type="email" name="email" value="{{ user.email }}" required>
+        </div>
+        
+        <div class="input-group">
+            <label>Bio</label>
+            {# En Nunjucks, on peut utiliser 'or' pour la valeur par défaut #}
+            <textarea name="bio" rows="4" style="width: 100%; padding: 1rem; background-color: #333; border: none; border-radius: 4px; color: white; resize: vertical;">{{ user.bio or '' }}</textarea>
+        </div>
+        
+        <button type="submit" class="btn-primary">Enregistrer les modifications</button>
+    </form>
+    
+    <div class="auth-links">
+        <p><a href="/dashboard">← Retourner au Dashboard</a></p>
+    </div>
+</div>
+{% endblock %}

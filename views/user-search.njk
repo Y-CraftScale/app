@@ -1,0 +1,40 @@
+{% extends "layout.njk" %}
+
+{% block title %}Rechercher des membres - CineAddict{% endblock %}
+
+{% block content %}
+<div class="search-header" style="text-align: center; margin: 3rem 0;">
+    <h1>Rechercher des membres CineAddict</h1>
+    <form action="/users/search" method="GET" class="search-form" style="justify-content: center;">
+        <input type="text" name="q" placeholder="Pseudo d'un ami..." value="{{ query or '' }}" required style="width: 50%; max-width: 400px; padding: 1rem; border-radius: 4px; border: none; font-size: 1rem;">
+        <button type="submit" class="btn-primary" style="padding: 1rem 2rem;">Rechercher</button>
+    </form>
+</div>
+
+<section class="movie-section" style="max-width: 800px; margin: 0 auto;">
+    {% if query and users %}
+        <h2>Résultats pour "{{ query }}"</h2>
+        
+        {% if users.length > 0 %}
+            <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem;">
+                {% for user_item in users %}
+                    <div style="background-color: #111; padding: 1.5rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #333;">
+                        <div>
+                            <h3 style="margin: 0; font-size: 1.5rem; color: var(--accent-blue);">{{ user_item.username }}</h3>
+                            <p style="margin: 0.5rem 0 0; color: #888; font-size: 0.9rem;">
+                                {# On utilise le filtre truncate de Nunjucks pour la bio #}
+                                {{ user_item.bio | truncate(100) if user_item.bio else 'Aucune bio renseignée.' }}
+                            </p>
+                        </div>
+                        <a href="/user/{{ user_item.id }}" class="btn-primary">Voir le Profil</a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="auth-container" style="text-align: center;">
+                <p>Aucun utilisateur trouvé avec ce pseudo. 😢</p>
+            </div>
+        {% endif %}
+    {% endif %}
+</section>
+{% endblock %}

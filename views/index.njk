@@ -1,0 +1,57 @@
+{% extends "layout.njk" %}
+
+{% block content %}
+<div class="home-container">
+    {# SECTION : TENDANCES #}
+    <section class="movie-section">
+        <h2>🔥 Tendances de la semaine</h2>
+        <div class="movie-grid">
+            {# Nunjucks vérifie l'existence et la longueur de manière fluide #}
+            {% if trendingMovies and trendingMovies.length > 0 %}
+                {% for movie in trendingMovies %}
+                    <a href="/movie/{{ movie.id }}" class="movie-card">
+                        {% if movie.poster_path %}
+                            <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}" alt="{{ movie.title }}">
+                        {% else %}
+                            <div class="no-poster">{{ movie.title }}</div>
+                        {% endif %}
+                        
+                        <div class="movie-info">
+                            <h3>{{ movie.title }}</h3>
+                            {# Utilisation du filtre 'round' pour remplacer 'toFixed(1)' #}
+                            <span class="rating">⭐ {{ movie.vote_average | round(1) }}</span>
+                        </div>
+                    </a>
+                {% endfor %}
+            {% else %}
+                <p>Aucune tendance disponible.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    {# SECTION : LES MIEUX NOTÉS #}
+    <section class="movie-section">
+        <h2>⭐️ Les mieux notés</h2>
+        <div class="movie-grid">
+            {% if topRatedMovies and topRatedMovies.length > 0 %}
+                {% for movie in topRatedMovies %}
+                    <a href="/movie/{{ movie.id }}" class="movie-card">
+                        {% if movie.poster_path %}
+                            <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}" alt="{{ movie.title }}">
+                        {% else %}
+                            <div class="no-poster">{{ movie.title }}</div>
+                        {% endif %}
+                        
+                        <div class="movie-info">
+                            <h3>{{ movie.title }}</h3>
+                            <span class="rating">⭐ {{ movie.vote_average | round(1) }}</span>
+                        </div>
+                    </a>
+                {% endfor %}
+            {% else %}
+                <p>Aucun film disponible.</p>
+            {% endif %}
+        </div>
+    </section>
+</div>
+{% endblock %}

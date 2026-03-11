@@ -1,0 +1,95 @@
+{% extends "layout.njk" %}
+
+{% block title %}Profil de {{ targetUser.username }} - CineAddict{% endblock %}
+
+{% block content %}
+<div class="dashboard-header auth-container" style="margin-top: 2rem; margin-bottom: 3rem; padding: 2rem;">
+    <h1>Profil de {{ targetUser.username }}</h1>
+    
+    {% if targetUser.bio %}
+        <p style="font-style: italic; color: #ccc;">"{{ targetUser.bio }}"</p>
+    {% endif %}
+
+    {% if currentUserId %}
+        <div style="margin-top: 1.5rem;">
+            {% if not friendshipStatus %}
+                {# Cas 1 : Aucune relation - Bouton ajouter #}
+                <form action="/friends/request" method="POST">
+                    <input type="hidden" name="receiverId" value="{{ targetUser.id }}">
+                    <button type="submit" class="btn-primary">➕ Ajouter en ami</button>
+                </form>
+            {% elif friendshipStatus.status === 'pending' %}
+                {% if friendshipStatus.user_id_1 === currentUserId %}
+                    {# Cas 2 : Demande envoyée par moi #}
+                    <button class="btn-primary" style="background-color: #555; cursor: not-allowed;" disabled>⏳ Demande envoyée</button>
+                {% else %}
+                    {# Cas 3 : Demande reçue de l'autre #}
+                    <form action="/friends/accept" method="POST" style="display:inline-block;">
+                        <input type="hidden" name="senderId" value="{{ friendshipStatus.user_id_1 }}">
+                        <button type="submit" class="btn-primary" style="background-color: var(--accent-blue);">✅ Accepter la demande d'ami</button>
+                    </form>
+                {% endif %}
+            {% elif friendshipStatus.status === 'accepted' %}
+                {# Cas 4 : Déjà amis #}
+                <button class="btn-primary" style="background-color: #28a745; cursor: default;" disabled>🤝 Vous êtes amis !</button>
+            {% endif %}
+        </div>
+    {% else %}
+        <p style="margin-top: 1rem; font-size: 0.9rem;">
+            <a href="/login" style="color: var(--accent-blue);">Connectez-vous</a> pour envoyer une demande d'ami.
+        </p>
+    {% endif %}
+</div>
+
+<div class="lists-container">
+    {# SECTION : WATCHLIST #}
+    <section class="movie-section">
+        <h2>📌 Watchlist de {{ targetUser.username }}</h2>
+        <div class="movie-grid">
+            {% if watchlist and watchlist.length > 0 %}
+                {% for movie in watchlist %}
+                    <div class="movie-card">
+                        <a href="/movie/{{ movie.movie_id }}">
+                            {% if movie.poster_path %}
+                                <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}" alt="{{ movie.title }}">
+                            {% else %}
+                                <div class="no-poster">{{ movie.title }}</div>
+                            {% endif %}
+                            <div class="movie-info">
+                                <h3>{{ movie.title }}</h3>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>Aucun film dans sa Watchlist.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    {# SECTION : FILMS VUS #}
+    <section class="movie-section" style="margin-top: 4rem;">
+        <h2>👁️ Films vus par {{ targetUser.username }}</h2>
+        <div class="movie-grid">
+            {% if watchedMovies and watchedMovies.length > 0 %}
+                {% for movie in watchedMovies %}
+                    <div class="movie-card">
+                        <a href="/movie/{{ movie.movie_id }}">
+                            {% if movie.poster_path %}
+                                <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}" alt="{{ movie.title }}" style="opacity: 0.7;">
+                            {% else %}
+                                <div class="no-poster">{{ movie.title }}</div>
+                            {% endif %}
+                            <div class="movie-info">
+                                <h3>{{ movie.title }}</h3>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>Aucun film marqué comme vu.</p>
+            {% endif %}
+        </div>
+    </section>
+</div>
+{% endblock %}

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CineAddict</title>
+    <title>{% block title %}CineAddict{% endblock %}</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 
@@ -18,34 +18,41 @@
             </form>
             <a href="/">Accueil</a>
             <a href="/users/search" style="margin-left: 1rem;">Communauté</a>
-            <% if (locals.user) { %>
-                <a href="/dashboard" class="btn-primary" style="margin-left: 1rem;">Mon Profil (<%= locals.user.username %>)</a>
-                <% if (locals.user.is_admin) { %>
+            
+            {# Gestion de la session utilisateur #}
+            {% if user %}
+                <a href="/dashboard" class="btn-primary" style="margin-left: 1rem;">Mon Profil ({{ user.username }})</a>
+                {% if user.is_admin %}
                     <a href="/admin" class="btn-primary" style="margin-left: 1rem; background-color: #e50914;">⚙️ Administration</a>
-                <% } %>
+                {% endif %}
                 <a href="/logout" style="margin-left: 1rem;">Déconnexion</a>
-            <% } else { %>
+            {% else %}
                 <a href="/login" style="margin-left: 1rem;">Connexion</a>
                 <a href="/register" style="margin-left: 1rem;">Inscription</a>
-            <% } %>
+            {% endif %}
         </nav>
     </header>
 
     <main class="main-content">
-        <% if (locals.error_msg && locals.error_msg.length > 0) { %>
-            <div class="alert alert-error"><%= error_msg %></div>
-        <% } %>
-        <% if (locals.success_msg && locals.success_msg.length > 0) { %>
-            <div class="alert alert-success"><%= success_msg %></div>
-        <% } %>
-        <%- body %>
+        {# Messages d'alerte (Flash messages) #}
+        {% if error_msg and error_msg.length > 0 %}
+            <div class="alert alert-error">{{ error_msg }}</div>
+        {% endif %}
+        
+        {% if success_msg and success_msg.length > 0 %}
+            <div class="alert alert-success">{{ success_msg }}</div>
+        {% endif %}
+
+        {# Emplacement où le contenu des autres pages sera injecté #}
+        {% block content %}{% endblock %}
     </main>
 
     <footer>
-        <p>&copy; <%= new Date().getFullYear() %> CineAddict. Tous droits réservés.</p>
+        <p>&copy; 2026 CineAddict. Tous droits réservés.</p>
     </footer>
 
     <script src="/js/script.js"></script>
+    {% block extra_js %}{% endblock %}
 </body>
 
 </html>
