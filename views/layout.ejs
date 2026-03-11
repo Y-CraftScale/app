@@ -12,37 +12,116 @@
     <header class="navbar">
         <a href="/" class="nav-brand">CineAddict</a>
         <nav class="nav-container">
-            <form action="/search" method="GET" class="search-form">
+            <form action="/search" method="GET" class="search-form" style="display: flex; align-items: center;">
                 <input type="text" name="q" placeholder="Rechercher un film..." required>
-                <button type="submit">🔍</button>
+                <button type="submit" style="display: flex; justify-content: center; align-items: center;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
             </form>
-            <a href="/">Accueil</a>
-            <a href="/users/search" style="margin-left: 1rem;">Communauté</a>
+            <a href="/">Films</a>
+            <a href="/profile/edit">Mon Profil</a>
             <% if (locals.user) { %>
-                <a href="/dashboard" class="btn-primary" style="margin-left: 1rem;">Mon Profil (<%= locals.user.username %>)</a>
                 <% if (locals.user.is_admin) { %>
-                    <a href="/admin" class="btn-primary" style="margin-left: 1rem; background-color: #e50914;">⚙️ Administration</a>
-                <% } %>
-                <a href="/logout" style="margin-left: 1rem;">Déconnexion</a>
-            <% } else { %>
-                <a href="/login" style="margin-left: 1rem;">Connexion</a>
-                <a href="/register" style="margin-left: 1rem;">Inscription</a>
-            <% } %>
+                    <a href="/admin" class="btn-filled"
+                        style="margin-left: 1rem; background-color: #e50914; border-color: #e50914; display: flex; align-items: center; gap: 0.5rem;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                            </path>
+                        </svg>
+                        Admin
+                    </a>
+                    <% } %>
+                        <a href="/logout" class="btn-filled" style="margin-left: 1rem;">Se déconnecter</a>
+                        <% } else { %>
+                            <a href="/register" class="btn-outline" style="margin-left: 1rem;">S'inscrire</a>
+                            <a href="/login" class="btn-filled" style="margin-left: 1rem;">S'identifier</a>
+                            <% } %>
         </nav>
     </header>
 
     <main class="main-content">
-        <% if (locals.error_msg && locals.error_msg.length > 0) { %>
-            <div class="alert alert-error"><%= error_msg %></div>
-        <% } %>
-        <% if (locals.success_msg && locals.success_msg.length > 0) { %>
-            <div class="alert alert-success"><%= success_msg %></div>
-        <% } %>
-        <%- body %>
+        <% if (locals.error_msg && locals.error_msg.length> 0) { %>
+            <div class="alert alert-error">
+                <%= error_msg %>
+            </div>
+            <% } %>
+                <% if (locals.success_msg && locals.success_msg.length> 0) { %>
+                    <div class="alert alert-success">
+                        <%= success_msg %>
+                    </div>
+                    <% } %>
+                        <%- body %>
     </main>
 
-    <footer>
-        <p>&copy; <%= new Date().getFullYear() %> CineAddict. Tous droits réservés.</p>
+    <footer style="background-color: #0a0a0a; padding: 4rem 2rem 2rem; margin-top: 4rem; border-top: 1px solid #222;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <div
+                style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 3rem; margin-bottom: 3rem;">
+                <div style="flex: 1; min-width: 250px;">
+                    <a href="/" class="nav-brand" style="margin-bottom: 1.5rem; display: inline-flex;">CineAddict</a>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; max-width: 300px; line-height: 1.6;">
+                        Votre carnet de bord cinématographique. Notez, lisez et partagez votre passion pour le cinéma
+                    </p>
+                </div>
+
+                <div style="flex: 1; min-width: 150px;">
+                    <h4 style="color: white; margin-bottom: 1.5rem; font-size: 1.1rem;">Plateforme</h4>
+                    <ul
+                        style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.8rem;">
+                        <li><a href="/"
+                                style="color: var(--text-secondary); text-decoration: none; transition: color 0.2s;">Accueil</a>
+                        </li>
+                        <li><a href="#"
+                                style="color: var(--text-secondary); text-decoration: none; transition: color 0.2s;">Films
+                                populaires</a></li>
+                        <li><a href="#"
+                                style="color: var(--text-secondary); text-decoration: none; transition: color 0.2s;">Séries
+                                TV</a></li>
+                    </ul>
+                </div>
+
+                <div style="flex: 1; min-width: 150px;">
+                    <h4 style="color: white; margin-bottom: 1.5rem; font-size: 1.1rem;">Communauté</h4>
+                    <ul
+                        style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.8rem;">
+                        <li><a href="#"
+                                style="color: var(--text-secondary); text-decoration: none; transition: color 0.2s;">Règles
+                                de la communauté</a></li>
+                        <li><a href="#"
+                                style="color: var(--text-secondary); text-decoration: none; transition: color 0.2s;">Support
+                                & aide</a></li>
+                    </ul>
+                </div>
+
+                <div style="flex: 1; min-width: 150px;">
+                    <h4 style="color: white; margin-bottom: 1.5rem; font-size: 1.1rem;">Légal</h4>
+                    <ul
+                        style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.8rem;">
+                        <li><a href="#"
+                                style="color: var(--text-secondary); text-decoration: none; transition: color 0.2s;">Confidentialité</a>
+                        </li>
+                        <li><a href="#"
+                                style="color: var(--text-secondary); text-decoration: none; transition: color 0.2s;">Contact</a>
+                        </li>
+                        <li><a href="#"
+                                style="color: var(--text-secondary); text-decoration: none; transition: color 0.2s;">Cookies</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div
+                style="text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #222; color: #666; font-size: 0.9rem;">
+                &copy; 2026 CinéNote. Tous droits réservés.
+            </div>
+        </div>
     </footer>
 
     <script src="/js/script.js"></script>
