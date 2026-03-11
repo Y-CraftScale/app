@@ -1,3 +1,5 @@
+{% extends "layout.njk" %}
+{% block content %}
 <div class="auth-container">
     <h1>Connexion</h1>
     <form action="/login" method="POST" class="auth-form">
@@ -13,3 +15,4 @@
         <p>Première visite sur CineAddict ? <a href="/register">Inscrivez-vous</a></p>
     </div>
 </div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "layout.njk" %}
+{% block content %}
+<div class="search-container">
+    <h2>Résultats pour "{{ query }}"</h2>
+
+    <div class="movie-grid">
+        {% if movies and movies.length > 0 %}
+            {% for movie in movies %}
+                <a href="/movie/{{ movie.id }}" class="movie-card">
+                    {% if movie.poster_path %}
+                        <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}" alt="{{ movie.title }}">
+                    {% else %}
+                        <div class="no-poster">
+                            {{ movie.title }}
+                        </div>
+                    {% endif %}
+                    <div class="movie-info">
+                        <h3>
+                            {{ movie.title }}
+                        </h3>
+                        <span class="rating" style="display: flex; align-items: center; gap: 0.25rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                viewBox="0 0 24 24" fill="#ffb400" stroke="#ffb400" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <polygon
+                                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                                </polygon>
+                            </svg>
+                            {{ movie.vote_average | round(1) if movie.vote_average else 'N/A' }}
+                        </span>
+                    </div>
+                </a>
+            {% endfor %}
+        {% else %}
+            <p>Aucun résultat trouvé.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

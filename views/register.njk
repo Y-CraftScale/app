@@ -1,3 +1,5 @@
+{% extends "layout.njk" %}
+{% block content %}
 <div class="auth-container">
     <h1>S'inscrire</h1>
     <form action="/register" method="POST" class="auth-form">
@@ -16,3 +18,4 @@
         <p>Déjà un compte ? <a href="/login">Connectez-vous</a></p>
     </div>
 </div>
+{% endblock %}

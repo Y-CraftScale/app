@@ -3,15 +3,18 @@ const express = require('express');
 const session = require('express-session');
 const path = require('path');
 const db = require('./config/db'); // Importe la connexion BDD pour vérifier qu'elle marche
-const expressLayouts = require('express-ejs-layouts');
+const nunjucks = require('nunjucks');
 
 const app = express();
 
 // --- 1. CONFIGURATION DU MOTEUR DE VUE ---
-// On dit à Express d'utiliser EJS pour afficher les pages
-app.set('view engine', 'ejs');
-app.use(expressLayouts);
-app.set('views', path.join(__dirname, 'views'));
+// On dit à Express d'utiliser Nunjucks pour afficher les pages
+nunjucks.configure(path.join(__dirname, 'views'), {
+    autoescape: true,
+    express: app,
+    watch: true
+});
+app.set('view engine', 'njk');
 
 // --- 2. MIDDLEWARES (Les outils globaux) ---
 // Pour lire les données des formulaires (POST)

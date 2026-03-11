@@ -1,0 +1,24 @@
+{% extends "layout.njk" %}
+{% block content %}
+<h1>Gestion Utilisateurs</h1>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Nom</th>
+        <th>Action</th>
+    </tr>
+    {% if users %}
+        {% for u in users %}
+            <tr>
+                <td>{{ u.id }}</td>
+                <td>{{ u.username }}</td>
+                <td>
+                    <form action="/admin/ban/{{ u.id }}" method="POST">
+                        <button>Bannir</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    {% endif %}
+</table>
+{% endblock %}

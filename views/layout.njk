@@ -24,8 +24,8 @@
             </form>
             <a href="/">Films</a>
             <a href="/profile/edit">Mon Profil</a>
-            <% if (locals.user) { %>
-                <% if (locals.user.is_admin) { %>
+            {% if user %}
+                {% if user.is_admin %}
                     <a href="/admin" class="btn-filled"
                         style="margin-left: 1rem; background-color: #e50914; border-color: #e50914; display: flex; align-items: center; gap: 0.5rem;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -37,27 +37,28 @@
                         </svg>
                         Admin
                     </a>
-                    <% } %>
-                        <a href="/logout" class="btn-filled" style="margin-left: 1rem;">Se déconnecter</a>
-                        <% } else { %>
-                            <a href="/register" class="btn-outline" style="margin-left: 1rem;">S'inscrire</a>
-                            <a href="/login" class="btn-filled" style="margin-left: 1rem;">S'identifier</a>
-                            <% } %>
+                {% endif %}
+                <a href="/logout" class="btn-filled" style="margin-left: 1rem;">Se déconnecter</a>
+            {% else %}
+                <a href="/register" class="btn-outline" style="margin-left: 1rem;">S'inscrire</a>
+                <a href="/login" class="btn-filled" style="margin-left: 1rem;">S'identifier</a>
+            {% endif %}
         </nav>
     </header>
 
     <main class="main-content">
-        <% if (locals.error_msg && locals.error_msg.length> 0) { %>
+        {% if error_msg and error_msg.length > 0 %}
             <div class="alert alert-error">
-                <%= error_msg %>
+                {{ error_msg }}
             </div>
-            <% } %>
-                <% if (locals.success_msg && locals.success_msg.length> 0) { %>
-                    <div class="alert alert-success">
-                        <%= success_msg %>
-                    </div>
-                    <% } %>
-                        <%- body %>
+        {% endif %}
+        {% if success_msg and success_msg.length > 0 %}
+            <div class="alert alert-success">
+                {{ success_msg }}
+            </div>
+        {% endif %}
+        
+        {% block content %}{% endblock %}
     </main>
 
     <footer style="background-color: #0a0a0a; padding: 4rem 2rem 2rem; margin-top: 4rem; border-top: 1px solid #222;">
@@ -126,5 +127,4 @@
 
     <script src="/js/script.js"></script>
 </body>
-
 </html>
