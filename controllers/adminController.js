@@ -2,12 +2,13 @@ const Admin = require('../models/Admin');
 
 exports.getAdminDashboard = async (req, res) => {
     try {
-        const [users, comments] = await Promise.all([
+        const [users, comments, stats] = await Promise.all([
             Admin.getAllUsers(),
-            Admin.getAllRecentComments()
+            Admin.getAllRecentComments(),
+            Admin.getStats()
         ]);
 
-        res.render('admin-dashboard', { users, comments });
+        res.render('admin-dashboard', { users, comments, stats });
     } catch (err) {
         console.error("Erreur param dashboard admin:", err);
         req.session.error_msg = "Erreur de chargement du dashboard administrateur.";
@@ -23,7 +24,7 @@ exports.toggleBan = async (req, res) => {
         const newStatus = currentStatus === '1' ? 0 : 1;
 
         await Admin.toggleBanStatus(targetUserId, newStatus);
-        
+
         req.session.success_msg = newStatus === 1 ? "Utilisateur banni !" : "Utilisateur débanni.";
         res.redirect('/admin');
     } catch (err) {
@@ -37,7 +38,7 @@ exports.deleteComment = async (req, res) => {
     try {
         const commentId = req.params.id;
         await Admin.deleteComment(commentId);
-        
+
         req.session.success_msg = "Commentaire supprimé définitivement.";
         res.redirect('/admin');
     } catch (err) {
@@ -51,7 +52,7 @@ exports.approveComment = async (req, res) => {
     try {
         const commentId = req.params.id;
         await Admin.approveComment(commentId);
-        
+
         req.session.success_msg = "Commentaire approuvé avec succès.";
         res.redirect('/admin');
     } catch (err) {

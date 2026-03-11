@@ -74,6 +74,9 @@
                 <p>Aucune tendance disponible.</p>
             {% endif %}
         </div>
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="/search?category=trending" class="btn-filled" style="display: inline-block;">Voir plus</a>
+        </div>
     </section>
 
     <section class="section-orange">
@@ -105,7 +108,9 @@
                 <p>Aucun film disponible.</p>
             {% endif %}
         </div>
-        <a href="/search" class="btn-white" style="margin-top: 2rem;">Voir plus</a>
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="/search?category=top_rated" class="btn-white" style="display: inline-block;">Voir plus</a>
+        </div>
     </section>
 
     <section class="movie-section">
@@ -141,6 +146,9 @@
             {% else %}
                 <p>Aucun film populaire disponible.</p>
             {% endif %}
+        </div>
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="/search?category=popular" class="btn-filled" style="display: inline-block;">Voir plus</a>
         </div>
     </section>
 </div>

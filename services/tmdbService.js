@@ -23,6 +23,16 @@ const getTrendingMovies = async () => {
     }
 };
 
+const getPopularMovies = async () => {
+    try {
+        const response = await tmdbClient.get('/movie/popular');
+        return response.data.results;
+    } catch (error) {
+        console.error("❌ Erreur TMDB getPopularMovies :", error.message);
+        return [];
+    }
+};
+
 const getTopRatedMovies = async () => {
     try {
         const response = await tmdbClient.get('/movie/top_rated');
@@ -80,6 +90,7 @@ module.exports = {
     tmdbClient,
     getTrendingMovies,
     getTopRatedMovies,
+    getPopularMovies,
     searchMovies,
     getMovieDetails,
     getSimilarMovies,

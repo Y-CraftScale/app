@@ -1,7 +1,7 @@
 {% extends "layout.njk" %}
 {% block content %}
 <div class="search-container">
-    <h2>Résultats pour "{{ query }}"</h2>
+    <h2>{{ pageTitle if pageTitle else 'Recherche' }}</h2>
 
     <div class="movie-grid">
         {% if movies and movies.length > 0 %}

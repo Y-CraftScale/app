@@ -10,6 +10,29 @@ const Admin = {
         return rows;
     },
 
+    getStats: async () => {
+        const queries = [
+            db.query('SELECT COUNT(*) as count FROM users'),
+            db.query('SELECT COUNT(*) as count FROM users WHERE MONTH(created_at) = MONTH(CURRENT_DATE()) AND YEAR(created_at) = YEAR(CURRENT_DATE())'),
+            db.query('SELECT COUNT(*) as count FROM comments'),
+            db.query('SELECT COUNT(*) as count FROM comments WHERE MONTH(created_at) = MONTH(CURRENT_DATE()) AND YEAR(created_at) = YEAR(CURRENT_DATE())')
+        ];
+
+        const [
+            [totalUsersRows],
+            [newUsersRows],
+            [totalCommentsRows],
+            [newCommentsRows]
+        ] = await Promise.all(queries);
+
+        return {
+            totalUsers: totalUsersRows[0].count,
+            newUsersThisMonth: newUsersRows[0].count,
+            totalComments: totalCommentsRows[0].count,
+            newCommentsThisMonth: newCommentsRows[0].count
+        };
+    },
+
     toggleBanStatus: async (userId, newStatus) => {
         await db.query(`
             UPDATE users 

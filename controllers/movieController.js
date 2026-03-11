@@ -4,41 +4,56 @@ const Comment = require('../models/Comment');
 
 exports.getHomePage = async (req, res) => {
     try {
-        const [trendingMovies, topRatedMovies] = await Promise.all([
+        const [trendingMovies, topRatedMovies, popularMovies] = await Promise.all([
             tmdbService.getTrendingMovies(),
-            tmdbService.getTopRatedMovies()
+            tmdbService.getTopRatedMovies(),
+            tmdbService.getPopularMovies()
         ]);
 
-        res.render('index', { 
+        res.render('index', {
             trendingMovies: trendingMovies.slice(0, 10),
-            topRatedMovies: topRatedMovies.slice(0, 10)
+            topRatedMovies: topRatedMovies.slice(0, 10),
+            popularMovies: popularMovies.slice(0, 10)
         });
     } catch (error) {
         console.error("Erreur getHomePage:", error);
-        res.render('index', { trendingMovies: [], topRatedMovies: [] });
+        res.render('index', { trendingMovies: [], topRatedMovies: [], popularMovies: [] });
     }
 };
 
 exports.search = async (req, res) => {
     try {
         const query = req.query.q;
+        const category = req.query.category;
         let movies = [];
-        
+        let pageTitle = 'Recherche';
+
         if (query && query.trim() !== '') {
             movies = await tmdbService.searchMovies(query);
+            pageTitle = `Résultats pour "${query}"`;
+        } else if (category === 'trending') {
+            movies = await tmdbService.getTrendingMovies();
+            pageTitle = 'Tendances à la une';
+        } else if (category === 'top_rated') {
+            movies = await tmdbService.getTopRatedMovies();
+            pageTitle = 'Les mieux notés';
+        } else {
+            // Afficher par defaut les films populaires si pas de recherche ni de catégorie spécifique (ou category='popular')
+            movies = await tmdbService.getPopularMovies();
+            pageTitle = category === 'popular' ? 'Films Populaires' : 'Découvrir';
         }
 
-        res.render('search', { movies, query });
+        res.render('search', { movies, query, pageTitle });
     } catch (error) {
         console.error("Erreur lors de la recherche:", error);
-        res.render('search', { movies: [], query: req.query.q || '' });
+        res.render('search', { movies: [], query: req.query.q || '', pageTitle: 'Recherche' });
     }
 };
 
 exports.getMovieById = async (req, res) => {
     try {
         const movieId = req.params.id;
-        
+
         const [movie, similarMovies, comments, providers] = await Promise.all([
             tmdbService.getMovieDetails(movieId),
             tmdbService.getSimilarMovies(movieId),
@@ -55,8 +70,8 @@ exports.getMovieById = async (req, res) => {
             userStatus = await UserMovie.getMovieStatus(req.session.userId, movieId);
         }
 
-        res.render('movie-details', { 
-            movie, 
+        res.render('movie-details', {
+            movie,
             similarMovies: similarMovies.slice(0, 6),
             comments,
             providers,
@@ -84,7 +99,7 @@ exports.addComment = async (req, res) => {
         }
 
         await Comment.addComment(userId, movieId, { id: movieId, title, poster_path, release_date }, content, rating);
-        
+
         req.session.success_msg = "Votre commentaire a été soumis et est en attente de modération.";
         res.redirect(`/movie/${movieId}`);
     } catch (err) {
@@ -98,14 +113,14 @@ exports.toggleWatchlist = async (req, res) => {
     try {
         const { movieId, title, poster_path, release_date } = req.body;
         const userId = req.session.userId;
-        
-        await UserMovie.addToWatchlist(userId, { 
-            id: movieId, 
-            title, 
-            poster_path, 
-            release_date 
+
+        await UserMovie.addToWatchlist(userId, {
+            id: movieId,
+            title,
+            poster_path,
+            release_date
         });
-        
+
         req.session.success_msg = "Film ajouté à votre Watchlist.";
         res.redirect(`/movie/${movieId}`);
     } catch (err) {
