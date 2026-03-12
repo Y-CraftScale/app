@@ -1,14 +1,25 @@
 const Admin = require('../models/Admin');
+const UserMovie = require('../models/UserMovie');
 
 exports.getAdminDashboard = async (req, res) => {
     try {
-        const [users, comments, stats] = await Promise.all([
+        const userId = req.session.userId;
+        const [users, comments, stats, watchlist, watchedMovies] = await Promise.all([
             Admin.getAllUsers(),
             Admin.getAllRecentComments(),
-            Admin.getStats()
+            Admin.getStats(),
+            UserMovie.getUserWatchlist(userId),
+            UserMovie.getUserWatchedMovies(userId)
         ]);
 
-        res.render('admin-dashboard', { users, comments, stats });
+        res.render('admin-dashboard', { 
+            users, 
+            comments, 
+            stats,
+            watchlist,
+            watchedMovies,
+            user: req.session.user // Ensure the user object is also available in session if not global
+        });
     } catch (err) {
         console.error("Erreur param dashboard admin:", err);
         req.session.error_msg = "Erreur de chargement du dashboard administrateur.";
