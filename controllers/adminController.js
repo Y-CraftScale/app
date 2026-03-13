@@ -72,3 +72,18 @@ exports.approveComment = async (req, res) => {
         res.redirect('/admin');
     }
 };
+
+exports.deleteUser = async (req, res) => {
+    try {
+        const targetUserId = req.params.id;
+
+        await Admin.deleteUser(targetUserId);
+
+        req.session.success_msg = "Compte utilisateur supprimé définitivement.";
+        res.redirect('/admin');
+    } catch (err) {
+        console.error("Erreur deleteUser (admin):", err);
+        req.session.error_msg = err.message || "Erreur lors de la suppression du compte.";
+        res.redirect('/admin');
+    }
+};

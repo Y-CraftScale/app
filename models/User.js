@@ -29,6 +29,15 @@ const User = {
             'UPDATE users SET username = ?, email = ?, bio = ? WHERE id = ?',
             [username, email, bio, userId]
         );
+    },
+
+    deleteUser: async (userId) => {
+        // Suppression dans l'ordre pour respecter les contraintes FK
+        await db.query('DELETE FROM user_movies WHERE user_id = ?', [userId]);
+        await db.query('DELETE FROM comments WHERE user_id = ?', [userId]);
+        // Supprimer les liens d'amitié si la table existe
+        await db.query('DELETE FROM friendships WHERE user_id_1 = ? OR user_id_2 = ?', [userId, userId]).catch(() => {});
+        await db.query('DELETE FROM users WHERE id = ?', [userId]);
     }
 };
 

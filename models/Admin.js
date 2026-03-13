@@ -67,6 +67,19 @@ const Admin = {
             DELETE FROM comments 
             WHERE id = ?
         `, [commentId]);
+    },
+
+    deleteUser: async (userId) => {
+        // Sécurité : on refuse de supprimer un admin via cette méthode
+        const [rows] = await db.query('SELECT is_admin FROM users WHERE id = ?', [userId]);
+        if (!rows[0] || rows[0].is_admin) {
+            throw new Error("Impossible de supprimer un compte administrateur.");
+        }
+        // Suppression dans l'ordre pour respecter les contraintes FK
+        await db.query('DELETE FROM user_movies WHERE user_id = ?', [userId]);
+        await db.query('DELETE FROM comments WHERE user_id = ?', [userId]);
+        await db.query('DELETE FROM friendships WHERE user_id_1 = ? OR user_id_2 = ?', [userId, userId]).catch(() => {});
+        await db.query('DELETE FROM users WHERE id = ? AND is_admin = FALSE', [userId]);
     }
 };
 

@@ -102,15 +102,37 @@
                                 <td>
                                     <span class="mod-movie-pill">{{ comment.movie_title }}</span>
                                 </td>
-                                <td>
-                                    <div class="mod-actions">
-                                        <form action="/admin/comment/approve/{{ comment.id }}" method="POST" style="margin: 0;">
-                                            <button type="submit" class="btn-approve">Aprouver</button>
+                                <td style="padding: 1rem;">
+                                    {% if u.is_admin %}
+                                        <span style="color: #e50914; font-weight: bold;">Admin</span>
+                                    {% else %}
+                                        Membre
+                                    {% endif %}
+                                </td>
+                                <td style="padding: 1rem;">
+                                    {% if u.is_banned %}
+                                        <span style="color: var(--danger); font-weight: bold;">🚫 Banni</span>
+                                    {% else %}
+                                        <span style="color: #28a745;">✅ Actif</span>
+                                    {% endif %}
+                                </td>
+                                <td style="padding: 1rem;">
+                                    {% if not u.is_admin %}
+                                        <form action="/admin/ban/{{ u.id }}" method="POST" style="margin: 0;">
+                                            <input type="hidden" name="currentStatus"
+                                                value="{{ 1 if u.is_banned else 0 }}">
+                                            {% if u.is_banned %}
+                                                <button type="submit" class="btn-primary"
+                                                    style="background-color: #ffb400; padding: 0.5rem; font-size: 0.8rem;">Débannir</button>
+                                            {% else %}
+                                                <button type="submit" class="btn-primary"
+                                                    style="background-color: var(--danger); padding: 0.5rem; font-size: 0.8rem;">Bannir</button>
+                                            {% endif %}
                                         </form>
-                                        <form action="/admin/comment/delete/{{ comment.id }}" method="POST" style="margin: 0;" onsubmit="return confirm('Supprimer définitivement ce commentaire ?');">
-                                            <button type="submit" class="btn-reject">Supprimer</button>
-                                        </form>
-                                    </div>
+                                    {% else %}
+                                        <span
+                                            style="color: #666; font-size: 0.9rem; font-style: italic;">Intouchable</span>
+                                    {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}

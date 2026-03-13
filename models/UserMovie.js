@@ -28,11 +28,17 @@ const UserMovie = {
     },
 
     markAsWatched: async (userId, movieId) => {
+        // UPSERT : fonctionne même si le film n'est pas encore dans la liste
         await db.query(`
-            UPDATE user_movies 
-            SET is_watched = TRUE, watched_at = CURRENT_TIMESTAMP 
-            WHERE user_id = ? AND movie_id = ?
+            INSERT INTO user_movies (user_id, movie_id, is_watched, watched_at)
+            VALUES (?, ?, TRUE, CURRENT_TIMESTAMP)
+            ON DUPLICATE KEY UPDATE is_watched = TRUE, watched_at = CURRENT_TIMESTAMP
         `, [userId, movieId]);
+    },
+
+    addDirectlyToWatched: async (userId, movieData) => {
+        await UserMovie._ensureMovieInCache(movieData);
+        await UserMovie.markAsWatched(userId, movieData.id);
     },
 
     removeFromList: async (userId, movieId) => {
