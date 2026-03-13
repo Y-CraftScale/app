@@ -7,6 +7,7 @@ router.use(requireAdmin); // Protect all routes below
 
 router.get('/', adminController.getAdminDashboard);
 router.post('/ban/:id', adminController.toggleBan);
+router.post('/delete/:id', adminController.deleteUser);
 router.post('/comment/approve/:id', adminController.approveComment);
 router.post('/comment/delete/:id', adminController.deleteComment);
 

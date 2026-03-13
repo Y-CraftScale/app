@@ -158,5 +158,36 @@
             </div>
         </section>
     </div>
+
+    <!-- ⚠️ ZONE DE DANGER -->
+    <div style="margin-top: 5rem; border: 1px solid #c0392b; border-radius: 12px; padding: 2rem; background-color: rgba(192, 57, 43, 0.05);">
+        <h3 style="color: #c0392b; margin-top: 0; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            Zone de danger
+        </h3>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">
+            La suppression de votre compte est <strong style="color: #c0392b;">irréversible</strong>. 
+            Toutes vos données (watchlist, historique, commentaires) seront définitivement effacées.
+        </p>
+        <form action="/account/delete" method="POST" onsubmit="return confirm('⚠️ Êtes-vous sûr(e) de vouloir supprimer définitivement votre compte ? Cette action est irréversible.');">
+            <button type="submit" style="background-color: #c0392b; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-size: 0.95rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; transition: background-color 0.2s;"
+                onmouseover="this.style.backgroundColor='#a93226'" onmouseout="this.style.backgroundColor='#c0392b'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6l-1 14H6L5 6"></path>
+                    <path d="M10 11v6"></path>
+                    <path d="M14 11v6"></path>
+                    <path d="M9 6V4h6v2"></path>
+                </svg>
+                Supprimer mon compte définitivement
+            </button>
+        </form>
+    </div>
 </div>
 {% endblock %}

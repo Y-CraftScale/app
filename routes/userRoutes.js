@@ -14,4 +14,7 @@ router.get('/user/:id', checkUser, userController.getPublicProfile);
 router.post('/friends/request', requireAuth, userController.sendFriendRequest);
 router.post('/friends/accept', requireAuth, userController.acceptFriendRequest);
 
+// Account deletion (Protected)
+router.post('/account/delete', requireAuth, userController.deleteAccount);
+
 module.exports = router;

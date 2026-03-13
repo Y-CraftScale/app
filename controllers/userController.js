@@ -130,3 +130,20 @@ exports.acceptFriendRequest = async (req, res) => {
         res.redirect('back');
     }
 };
+
+exports.deleteAccount = async (req, res) => {
+    try {
+        const userId = req.session.userId;
+
+        await User.deleteUser(userId);
+
+        // Détruire la session et rediriger vers l'accueil
+        req.session.destroy(() => {
+            res.redirect('/');
+        });
+    } catch (err) {
+        console.error("Erreur deleteAccount:", err);
+        req.session.error_msg = "Erreur lors de la suppression du compte.";
+        res.redirect('/dashboard');
+    }
+};

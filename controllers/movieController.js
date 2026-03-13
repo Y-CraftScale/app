@@ -130,6 +130,27 @@ exports.markAsWatched = async (req, res) => {
     }
 };
 
+exports.addDirectlyToWatched = async (req, res) => {
+    try {
+        const { movieId, title, poster_path, release_date } = req.body;
+        const userId = req.session.userId;
+
+        await UserMovie.addDirectlyToWatched(userId, {
+            id: movieId,
+            title,
+            poster_path,
+            release_date
+        });
+
+        req.session.success_msg = "Film ajouté à votre historique !";
+        res.redirect(`/movie/${movieId}`);
+    } catch (err) {
+        console.error("Erreur addDirectlyToWatched:", err);
+        req.session.error_msg = "Impossible d'ajouter le film à l'historique.";
+        res.redirect('back');
+    }
+};
+
 exports.removeFromList = async (req, res) => {
     try {
         const { movieId } = req.body;
